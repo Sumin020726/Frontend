@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT1호관 101호 – Kyungpook University</title>
+  <link rel="stylesheet" href="classroom-page2.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="frame">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-placeholder">
+            <i class="fas fa-university"></i>
+          </div>
+          <div class="university-name">Kyungpook University</div>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span class="user-name">환영합니다!</span>
+          </div>
+          <button class="logout-btn" title="로그아웃">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 사이드 네비게이션 -->
+    <nav class="sidebar">
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-group">
+            <div class="nav-group-header" data-page="mainmenu.html">
+              <i class="fas fa-building"></i>
+              <span>강의실 목록</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item active" data-page="classroom-search1.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 1호관</span>
+                <div class="nav-badge">8</div>
+              </div>
+              <div class="nav-item" data-page="classroom-search2.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 5호관</span>
+                <div class="nav-badge">6</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-header">
+              <i class="fas fa-user-circle"></i>
+              <span>마이페이지</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="usage-history.html">
+                <i class="fas fa-history"></i>
+                <span>이용 내역</span>
+              </div>
+              <div class="nav-item" data-page="point.html">
+                <i class="fas fa-coins"></i>
+                <span>보증 포인트</span>
+                <div class="nav-badge point">100P</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="quick-stats">
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <div class="stat-info">
+                <span class="stat-label">이용 시간</span>
+                <span class="stat-value">2시간 30분</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <!-- 배너 -->
+      <div class="banner">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h1 id="roomTitle">IT1호관 101호</h1>
+            <p>강의실 사용 인증 및 시간 예약을 진행할 수 있습니다</p>
+          </div>
+          <div class="banner-decoration">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-container">
+        <!-- 강의실 정보 카드 -->
+        <div class="classroom-info-section">
+          <div class="classroom-status-card">
+            <div class="status-header">
+              <div class="room-icon">
+                <i class="fas fa-door-open"></i>
+              </div>
+              <div class="room-details">
+                <h3 id="roomCardTitle">IT1호관 101호</h3>
+                <div class="room-features">
+                  <span class="feature-tag">
+                    <i class="fas fa-wifi"></i>
+                    무선 인터넷
+                  </span>
+                  <span class="feature-tag">
+                    <i class="fas fa-tv"></i>
+                    프로젝터
+                  </span>
+                  <span class="feature-tag">
+                    <i class="fas fa-snowflake"></i>
+                    에어컨
+                  </span>
+                </div>
+              </div>
+              <div class="room-status available">
+                <i class="fas fa-circle"></i>
+                <span>이용 가능</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 메인 기능 섹션 -->
+        <div class="main-functions">
+          <!-- 사용 인증 카드 -->
+          <div class="function-card auth-card">
+            <div class="card-header">
+              <div class="card-icon auth">
+                <i class="fas fa-camera"></i>
+              </div>
+              <div class="card-title">
+                <h3>사용 인증</h3>
+                <p>현재 강의실에 있는지 사진으로 인증해주세요</p>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="auth-steps">
+                <div class="step">
+                  <div class="step-number">1</div>
+                  <span>강의실 내부 사진 촬영</span>
+                </div>
+                <div class="step">
+                  <div class="step-number">2</div>
+                  <span>AI 자동 인증 처리</span>
+                </div>
+                <div class="step">
+                  <div class="step-number">3</div>
+                  <span>사용 권한 활성화</span>
+                </div>
+              </div>
+              
+              <div class="photo-upload-area" id="photoUploadArea">
+                <div class="upload-placeholder">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>사진을 업로드하거나 여기를 클릭하세요</p>
+                  <span>JPG, PNG 파일만 가능 (최대 5MB)</span>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" hidden>
+              </div>
+            </div>
+            
+            <div class="card-footer">
+              <button class="btn-primary auth-btn" id="authBtn">
+                <i class="fas fa-camera"></i>
+                <span>사진 인증하기</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 예약 카드 -->
+          <div class="function-card reservation-card">
+            <div class="card-header">
+              <div class="card-icon reservation">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="card-title">
+                <h3>시간 예약</h3>
+                <p>원하는 사용 시간을 선택하고 예약해주세요</p>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <form class="reservation-form" id="reservationForm">
+                <div class="time-selection">
+                  <div class="time-group">
+                    <label for="startTime">시작 시간</label>
+                    <div class="select-wrapper">
+                      <select id="startTime" required>
+                        <option value="">선택하세요</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                        <option value="18:00">18:00</option>
+                      </select>
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                  </div>
+                  
+                  <div class="time-group">
+                    <label for="endTime">종료 시간</label>
+                    <div class="select-wrapper">
+                      <select id="endTime" required>
+                        <option value="">선택하세요</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                        <option value="18:00">18:00</option>
+                        <option value="19:00">19:00</option>
+                      </select>
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="duration-display" id="durationDisplay">
+                  <i class="fas fa-clock"></i>
+                  <span>사용 시간을 선택해주세요</span>
+                </div>
+                
+                <div class="reservation-summary" id="reservationSummary" style="display: none;">
+                  <h4>예약 정보</h4>
+                  <div class="summary-item">
+                    <span>강의실:</span>
+                    <span id="roomSummaryName">IT1호관 101호</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>날짜:</span>
+                    <span id="reservationDate"></span>
+                  </div>
+                  <div class="summary-item">
+                    <span>시간:</span>
+                    <span id="reservationTime"></span>
+                  </div>
+                  <div class="summary-item">
+                    <span>사용 시간:</span>
+                    <span id="reservationDuration"></span>
+                  </div>
+                </div>
+              </form>
+            </div>
+            
+            <div class="card-footer">
+              <button class="btn-secondary reservation-btn" id="reservationBtn" disabled>
+                <i class="fas fa-calendar-plus"></i>
+                <span>예약하기</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 이용 안내 -->
+        <div class="usage-guide">
+          <div class="guide-header">
+            <i class="fas fa-info-circle"></i>
+            <h3>강의실 이용 안내</h3>
+          </div>
+          <div class="guide-content">
+            <div class="guide-section">
+              <h4>사용 인증 안내</h4>
+              <ul>
+                <li>강의실 내부가 잘 보이도록 사진을 촬영해주세요</li>
+                <li>AI가 자동으로 강의실을 인식하여 인증을 처리합니다</li>
+                <li>인증 실패 시 다시 촬영하여 재시도할 수 있습니다</li>
+              </ul>
+            </div>
+            <div class="guide-section">
+              <h4>예약 및 이용 규칙</h4>
+              <ul>
+                <li>최소 1시간, 최대 4시간까지 예약 가능합니다</li>
+                <li>예약 시간 15분 전까지 취소 가능합니다</li>
+                <li>강의실 내 음식물 반입을 금지합니다</li>
+                <li>퇴실 시 전등 및 에어컨 전원을 확인해주세요</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast" id="toast">
+    <div class="toast-content">
+      <i class="toast-icon"></i>
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <!-- 인증 성공 모달 -->
+  <div class="modal" id="authModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>인증 완료</h3>
+        <button class="close-modal-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="success-animation">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <p>사진 인증이 성공적으로 완료되었습니다!</p>
+        <p class="modal-info">이제 강의실을 자유롭게 이용하실 수 있습니다.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="confirmAuthBtn">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 예약 확인 모달 -->
+  <div class="modal" id="reservationModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>예약 확인</h3>
+        <button class="close-modal-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>다음 내용으로 예약하시겠습니까?</p>
+        <div class="reservation-details" id="modalReservationDetails">
+          <!-- 예약 정보가 여기에 표시됩니다 -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelReservationBtn">취소</button>
+        <button class="btn-primary" id="confirmReservationBtn">예약 확정</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="classroom-page2.js"></script>
+</body>
+</html>

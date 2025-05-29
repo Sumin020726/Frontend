@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>보증 포인트 – Kyungpook University</title>
+  <link rel="stylesheet" href="point.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="frame">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-placeholder">
+            <i class="fas fa-university"></i>
+          </div>
+          <div class="university-name">Kyungpook University</div>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span class="user-name">환영합니다!</span>
+          </div>
+          <button class="logout-btn" title="로그아웃">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 사이드 네비게이션 -->
+    <nav class="sidebar">
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-group">
+            <div class="nav-group-header" data-page="mainmenu.html">
+              <i class="fas fa-building"></i>
+              <span>강의실 목록</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="classroom-search1.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 1호관</span>
+                <div class="nav-badge">8</div>
+              </div>
+              <div class="nav-item" data-page="classroom-search2.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 5호관</span>
+                <div class="nav-badge">6</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-header" data-page="mypage.html">
+              <i class="fas fa-user-circle"></i>
+              <span>마이페이지</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="usage-history.html">
+                <i class="fas fa-history"></i>
+                <span>이용 내역</span>
+                <div class="nav-badge">0</div>
+              </div>
+              <div class="nav-item active" data-page="point.html">
+                <i class="fas fa-coins"></i>
+                <span>보증 포인트</span>
+                <div class="nav-badge point">100P</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="quick-stats">
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <div class="stat-info">
+                <span class="stat-label">이용 시간</span>
+                <span class="stat-value">2시간 30분</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <!-- 배너 -->
+      <div class="banner">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h1>보증 포인트</h1>
+            <p>강의실 이용의 신뢰도를 나타내며, 올바른 이용으로 포인트를 적립하세요</p>
+          </div>
+          <div class="banner-decoration">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-container">
+        <!-- 포인트 현황 카드 -->
+        <div class="points-overview">
+          <div class="current-points-card">
+            <div class="points-header">
+              <div class="points-icon">
+                <i class="fas fa-coins"></i>
+              </div>
+              <div class="points-info">
+                <h2>현재 보유 포인트</h2>
+                <div class="points-value">
+                  <span class="points-number">100</span>
+                  <span class="points-unit">P</span>
+                </div>
+              </div>
+              <div class="points-status good">
+                <i class="fas fa-check-circle"></i>
+                <span>양호</span>
+              </div>
+            </div>
+            
+            <div class="points-gauge">
+              <div class="gauge-track">
+                <div class="gauge-fill" style="width: 80%;"></div>
+              </div>
+              <div class="gauge-labels">
+                <span>0P</span>
+                <span>50P</span>
+                <span>100P</span>
+                <span>150P</span>
+              </div>
+            </div>
+
+            <div class="points-description">
+              <div class="description-item">
+                <i class="fas fa-info-circle"></i>
+                <p>포인트는 강의실 이용 신뢰도를 나타냅니다</p>
+              </div>
+              <div class="description-item">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>퇴실 실패 또는 무단 사용 시 포인트가 차감됩니다</p>
+              </div>
+              <div class="description-item">
+                <i class="fas fa-plus-circle"></i>
+                <p>정당한 신고나 정상 이용 시 포인트를 획득할 수 있습니다</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 포인트 이력 카드 -->
+        <div class="points-history-card">
+          <div class="history-header">
+            <h3>
+              <i class="fas fa-history"></i>
+              포인트 이력
+            </h3>
+            <div class="history-filter">
+              <button class="filter-btn active" data-filter="all">전체</button>
+              <button class="filter-btn" data-filter="plus">적립</button>
+              <button class="filter-btn" data-filter="minus">차감</button>
+            </div>
+          </div>
+
+          <div class="history-list">
+            <div class="history-item plus" data-type="plus">
+              <div class="history-icon plus">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="history-content">
+                <h4>신고 보상</h4>
+                <p>부정 이용 신고 접수 완료</p>
+                <span class="history-date">2025-05-21 14:30</span>
+              </div>
+              <div class="history-points plus">
+                <span>+10P</span>
+              </div>
+            </div>
+
+            <div class="history-item plus" data-type="plus">
+              <div class="history-icon plus">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="history-content">
+                <h4>예약 취소</h4>
+                <p>정상적인 예약 취소 처리</p>
+                <span class="history-date">2025-05-20 16:45</span>
+              </div>
+              <div class="history-points plus">
+                <span>+5P</span>
+              </div>
+            </div>
+
+            <div class="history-item minus" data-type="minus">
+              <div class="history-icon minus">
+                <i class="fas fa-minus"></i>
+              </div>
+              <div class="history-content">
+                <h4>미퇴실</h4>
+                <p>예약 시간 종료 후 미퇴실</p>
+                <span class="history-date">2025-05-18 18:00</span>
+              </div>
+              <div class="history-points minus">
+                <span>-15P</span>
+              </div>
+            </div>
+
+            <div class="history-item plus" data-type="plus">
+              <div class="history-icon plus">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="history-content">
+                <h4>정상 이용</h4>
+                <p>IT1-101 강의실 정상 이용 완료</p>
+                <span class="history-date">2025-05-15 14:00</span>
+              </div>
+              <div class="history-points plus">
+                <span>+5P</span>
+              </div>
+            </div>
+
+            <div class="history-item plus" data-type="plus">
+              <div class="history-icon plus">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="history-content">
+                <h4>첫 이용 보너스</h4>
+                <p>강의실 예약 시스템 첫 이용</p>
+                <span class="history-date">2025-05-10 10:00</span>
+              </div>
+              <div class="history-points plus">
+                <span>+100P</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="history-empty" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <p>해당 조건의 이력이 없습니다.</p>
+          </div>
+        </div>
+
+        <!-- 포인트 안내 카드 -->
+        <div class="points-guide-card">
+          <div class="guide-header">
+            <h3>
+              <i class="fas fa-lightbulb"></i>
+              포인트 안내
+            </h3>
+          </div>
+          
+          <div class="guide-content">
+            <div class="guide-section">
+              <h4>포인트 적립 방법</h4>
+              <ul>
+                <li><span class="point-value">+5P</span> 강의실 정상 이용 완료</li>
+                <li><span class="point-value">+5P</span> 예약 정상 취소 (15분 전)</li>
+                <li><span class="point-value">+10P</span> 부정 이용 신고 접수</li>
+                <li><span class="point-value">+100P</span> 첫 이용 보너스</li>
+              </ul>
+            </div>
+
+            <div class="guide-section">
+              <h4>포인트 차감 사유</h4>
+              <ul>
+                <li><span class="point-value minus">-15P</span> 예약 후 미퇴실</li>
+                <li><span class="point-value minus">-20P</span> 무단 강의실 사용</li>
+                <li><span class="point-value minus">-10P</span> 예약 무단 취소</li>
+                <li><span class="point-value minus">-25P</span> 강의실 내 부정행위</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="guide-notice">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>포인트가 0점 이하로 떨어지면 일정 기간 강의실 이용이 제한될 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast" id="toast">
+    <div class="toast-content">
+      <i class="toast-icon"></i>
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="point.js"></script>
+</body>
+</html>

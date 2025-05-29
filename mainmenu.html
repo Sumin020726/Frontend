@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>메인 메뉴 – Kyungpook University</title>
+  <link rel="stylesheet" href="mainmenu.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="frame">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-placeholder">
+            <img src="kyungpook_emblem.jpg">
+          </div>
+          <div class="university-name">Kyungpook University</div>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span class="user-name">환영합니다!</span>
+          </div>
+          <button class="logout-btn" title="로그아웃">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 사이드 네비게이션 -->
+    <nav class="sidebar">
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-group">
+            <div class="nav-group-header" data-page="mainmenu.html">
+              <i class="fas fa-building"></i>
+              <span>강의실 목록</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="classroom-search1.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 1호관</span>
+                <div class="nav-badge">5</div>
+              </div>
+              <div class="nav-item" data-page="classroom-search2.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 5호관</span>
+                <div class="nav-badge">3</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-header" data-page = "mypage.html">
+              <i class="fas fa-user-circle"></i>
+              <span>마이페이지</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="usage-history.html">
+                <i class="fas fa-history"></i>
+                <span>이용 내역</span>
+              </div>
+              <div class="nav-item" data-page="point.html">
+                <i class="fas fa-coins"></i>
+                <span>보증 포인트</span>
+                <div class="nav-badge point">100P</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="quick-stats">
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <div class="stat-info">
+                <span class="stat-label">이용 시간</span>
+                <span class="stat-value">2시간 30분</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 배너 -->
+    <div class="banner">
+      <div class="banner-content">
+        <div class="banner-text">
+          <h1>메인 메뉴</h1>
+          <p>사용하실 강의실의 건물을 선택해주세요</p>
+        </div>
+        <div class="banner-decoration">
+          <div class="floating-element"></div>
+          <div class="floating-element"></div>
+          <div class="floating-element"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <div class="content-container">
+        <div class="building-selection">
+          <h2 class="section-title">강의실 선택</h2>
+          <p class="section-subtitle">원하시는 건물을 선택하여 빈 강의실을 확인하세요</p>
+          
+          <div class="building-grid">
+            <div class="building-card" data-building="it1">
+              <div class="building-card-header">
+                <div class="building-icon">
+                  <i class="fas fa-building"></i>
+                </div>
+                <div class="building-status available">
+                  <i class="fas fa-circle"></i>
+                  <span>이용 가능</span>
+                </div>
+              </div>
+              
+              <div class="building-card-content">
+                <h3>IT 1호관</h3>
+                <div class="building-stats">
+                  <div class="stat">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">빈 강의실</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">전체 강의실</span>
+                  </div>
+                </div>
+                
+                
+              </div>
+              
+              <div class="building-card-footer">
+                <button class="select-building-btn">
+                  <span>선택하기</span>
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="building-card" data-building="it5">
+              <div class="building-card-header">
+                <div class="building-icon">
+                  <i class="fas fa-building"></i>
+                </div>
+                <div class="building-status available">
+                  <i class="fas fa-circle"></i>
+                  <span>이용 가능</span>
+                </div>
+              </div>
+              
+              <div class="building-card-content">
+                <h3>IT 5호관</h3>
+                <div class="building-stats">
+                  <div class="stat">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">빈 강의실</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">전체 강의실</span>
+                  </div>
+                </div>
+                
+                
+              </div>
+              
+              <div class="building-card-footer">
+                <button class="select-building-btn">
+                  <span>선택하기</span>
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+    </main>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast" id="toast">
+    <div class="toast-content">
+      <i class="toast-icon"></i>
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="mainmenu.js"></script>
+</body>
+</html>

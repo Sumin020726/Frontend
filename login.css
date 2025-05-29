@@ -1,0 +1,667 @@
+/* 세련된 로그인 페이지 스타일 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #543c52;
+  --secondary-color: #edd2cb;
+  --accent-color: #361d32;
+  --background-color: #f8f9fa;
+  --card-background: #ffffff;
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --border-color: #e2e8f0;
+  --success-color: #48bb78;
+  --error-color: #f56565;
+  --warning-color: #ed8936;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body {
+  overflow:hidden;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, var(--background-color) 0%, #e8f4f8 100%);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* 전체 레이아웃 */
+.frame {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 70px auto 1fr;
+  grid-template-areas:
+    'header header'
+    'sidebar banner'
+    'sidebar main';
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 헤더 */
+.header {
+  grid-area: header;
+  background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 32px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  box-shadow: var(--shadow-md);
+  
+}
+.logo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 비율 유지하면서 안 찌그러지게 */
+  border-radius: 12px;
+}
+
+
+.university-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: -0.025em;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.help-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--background-color);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.help-btn:hover {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+/* 사이드바 */
+.sidebar {
+  grid-area: sidebar;
+  background: linear-gradient(180deg, var(--accent-color) 0%, #2d1b2e 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.sidebar-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+}
+
+.nav-section {
+  flex: 1;
+  padding: 0 24px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #f0d5d0 100%);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-item i {
+  font-size: 18px;
+  width: 20px;
+}
+
+.sidebar-footer {
+  padding: 24px;
+  text-align: center;
+}
+
+.mascot-area {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.mascot-icon {
+  font-size: 32px;
+  color: var(--secondary-color);
+}
+
+/* 배너 */
+.banner {
+  grid-area: banner;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #f5e6e0 50%, #ead5cf 100%);
+  position: relative;
+}
+.banner, .main-content{
+    overflow-y:auto;
+}
+
+.banner-content {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  padding: 40px;
+}
+
+.banner-text h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.025em;
+}
+
+.banner-text h2 {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  letter-spacing: -0.05em;
+}
+
+.banner-text p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.banner-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.floating-element {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-element:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-element:nth-child(2) {
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+  width: 80px;
+  height: 80px;
+}
+
+.floating-element:nth-child(3) {
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+  width: 60px;
+  height: 60px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  grid-area: main;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 480px;
+  height:95%;
+}
+
+.login-card {
+  background: var(--card-background);
+  border-radius: 24px;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-header {
+  padding: 24px 24px 16px;
+  text-align: center;
+  background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+}
+
+.card-header h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1px;
+  letter-spacing: -0.025em;
+}
+
+.card-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.login-form {
+  padding: 1px 20px 10px;
+}
+
+.form-group {
+  margin-bottom: 1px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: 0.025em;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 16px 16px 16px 48px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  background: #fafafa;
+  transition: var(--transition);
+  position: relative;
+  z-index: 1;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(84, 60, 82, 0.1);
+}
+
+.input-wrapper input:focus + .input-line {
+  transform: scaleX(1);
+}
+
+.input-wrapper input:focus ~ i {
+  color: var(--primary-color);
+}
+
+.input-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  z-index: 3;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.error-message {
+  display: block;
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: var(--transition);
+}
+
+.error-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.signin-button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  margin-top: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.signin-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.signin-button:active {
+  transform: translateY(0);
+}
+
+.signin-button.loading {
+  pointer-events: none;
+}
+
+.button-text {
+  transition: var(--transition);
+}
+
+.button-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.signin-button.loading .button-text {
+  opacity: 0;
+}
+
+.signin-button.loading .button-loader {
+  opacity: 1;
+}
+
+.card-footer {
+  padding: 0 40px 40px;
+  text-align: center;
+}
+
+.help-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.help-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.help-link:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* 토스트 알림 */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-color);
+  padding: 16px 20px;
+  transform: translateX(400px);
+  transition: var(--transition);
+  z-index: 1000;
+  min-width: 300px;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toast-icon {
+  font-size: 18px;
+}
+
+.toast.success .toast-icon {
+  color: var(--success-color);
+}
+
+.toast.error .toast-icon {
+  color: var(--text-primary);
+}
+
+.toast-message {
+  font-weight: 500;
+  color: var(--text-primary);
+
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: 70px auto auto 1fr;
+    grid-template-areas:
+      'header'
+      'banner'
+      'sidebar'
+      'main';
+  }
+  
+  .sidebar {
+    height: auto;
+  }
+  
+  .sidebar-content {
+    flex-direction: row;
+    padding: 16px 24px;
+  }
+  
+  .nav-section {
+    flex: 1;
+    padding: 0;
+  }
+  
+  .nav-item {
+    display: inline-flex;
+    margin-right: 16px;
+    margin-bottom: 0;
+  }
+  
+  .sidebar-footer {
+    padding: 0 24px;
+  }
+  
+  .mascot-area {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .mascot-icon {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px;
+  }
+  
+  .login-card {
+    border-radius: 16px;
+  }
+  
+  .card-header {
+    padding: 32px 24px 16px;
+  }
+  
+  .login-form {
+    padding: 16px 24px 32px;
+  }
+  
+  .card-footer {
+    padding: 0 24px 32px;
+  }
+  
+  .help-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .banner-text h1 {
+    font-size: 24px;
+  }
+  
+  .banner-text h2 {
+    font-size: 32px;
+  }
+  
+  .university-name {
+    font-size: 16px;
+  }
+  
+  .header-content {
+    padding: 0 20px;
+  }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #1a202c;
+    --card-background: #2d3748;
+    --text-primary: #f7fafc;
+    --text-secondary: #a0aec0;
+    --border-color: #4a5568;
+  }
+}

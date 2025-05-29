@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT 1호관 강의실 – Kyungpook University</title>
+  <link rel="stylesheet" href="classroom-search2.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="frame">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-placeholder">
+            <img src = "kyungpook_emblem.jpg">
+          </div>
+          <div class="university-name">Kyungpook University</div>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span class="user-name">환영합니다!</span>
+          </div>
+          <button class="logout-btn" title="로그아웃">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 사이드 네비게이션 -->
+    <nav class="sidebar">
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-group">
+            <div class="nav-group-header" data-page="mainmenu.html">
+              <i class="fas fa-building"></i>
+              <span>강의실 목록</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="classroom-search1.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 1호관</span>
+                <div class="nav-badge">8</div>
+              </div>
+              <div class="nav-item active" data-page="classroom-search2.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 5호관</span>
+                <div class="nav-badge">6</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-header">
+              <i class="fas fa-user-circle"></i>
+              <span>마이페이지</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="usage-history.html">
+                <i class="fas fa-history"></i>
+                <span>이용 내역</span>
+              </div>
+              <div class="nav-item" data-page="point.html">
+                <i class="fas fa-coins"></i>
+                <span>보증 포인트</span>
+                <div class="nav-badge point">100P</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="quick-stats">
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <div class="stat-info">
+                <span class="stat-label">이용 시간</span>
+                <span class="stat-value">2시간 30분</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <!-- 배너 -->
+      <div class="banner">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h1>IT 1호관 강의실 목록</h1>
+            <p>빈 강의실 확률, 잠김 여부, 18시 이전 사용 여부를 확인하세요</p>
+          </div>
+          <div class="banner-decoration">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-container">
+        <div class="classroom-section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>강의실 현황</h2>
+              <span class="update-time">마지막 업데이트: <span id="lastUpdate">2023-05-29 15:30</span></span>
+            </div>
+            <div class="section-actions">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="강의실 검색...">
+              </div>
+              <button class="refresh-btn" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i>
+                <span>새로고침</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="classroom-filters">
+            <div class="filter-group">
+              <label>상태 필터:</label>
+              <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="high">높은 확률</button>
+                <button class="filter-btn" data-filter="medium">중간 확률</button>
+                <button class="filter-btn" data-filter="low">낮은 확률</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="classroom-table-container">
+            <table class="classroom-table">
+              <thead>
+                <tr>
+                  <th>강의실명</th>
+                  <th>빈 강의실 확률</th>
+                  <th>잠김 여부</th>
+                  <th>18시 이전 사용 여부</th>
+                  <th>입장</th>
+                </tr>
+              </thead>
+              <tbody id="classroomTableBody">
+                <!-- 강의실 데이터는 JavaScript로 동적 생성 -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="classroom-legend">
+            <div class="legend-item">
+              <div class="legend-color high"></div>
+              <span>높은 확률 (70% 이상)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color medium"></div>
+              <span>중간 확률 (40-70%)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color low"></div>
+              <span>낮은 확률 (40% 미만)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="classroom-info-card">
+          <div class="info-card-header">
+            <i class="fas fa-info-circle"></i>
+            <h3>강의실 이용 안내</h3>
+          </div>
+          <div class="info-card-content">
+            <p>강의실 이용 시 다음 사항을 준수해 주세요:</p>
+            <ul>
+              <li>강의실 내 음식물 반입 금지</li>
+              <li>퇴실 시 전등 및 에어컨 전원 확인</li>
+              <li>개인 소지품 분실에 주의</li>
+              <li>이용 후 정리정돈 필수</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast" id="toast">
+    <div class="toast-content">
+      <i class="toast-icon"></i>
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <!-- 입장 확인 모달 -->
+  <div class="modal" id="entryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>강의실 입장</h3>
+        <button class="close-modal-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><span id="selectedRoom"></span> 강의실에 입장하시겠습니까?</p>
+        <p class="modal-info">강의실 이용 규칙을 준수해 주세요.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelEntryBtn">취소</button>
+        <button class="btn-primary" id="confirmEntryBtn">입장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="classroom-search2.js"></script>
+</body>
+</html>

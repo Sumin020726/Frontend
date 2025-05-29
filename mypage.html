@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마이페이지 – Kyungpook University</title>
+  <link rel="stylesheet" href="mypage.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="frame">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-placeholder">
+            <i class="fas fa-university"></i>
+          </div>
+          <div class="university-name">Kyungpook University</div>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span class="user-name">환영합니다!</span>
+          </div>
+          <button class="logout-btn" title="로그아웃">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 사이드 네비게이션 -->
+    <nav class="sidebar">
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-group">
+            <div class="nav-group-header" data-page="mainmenu.html">
+              <i class="fas fa-building"></i>
+              <span>강의실 목록</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="classroom-search1.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 1호관</span>
+                <div class="nav-badge">8</div>
+              </div>
+              <div class="nav-item" data-page="classroom-search2.html">
+                <i class="fas fa-door-open"></i>
+                <span>IT 5호관</span>
+                <div class="nav-badge">6</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-group-header active">
+              <i class="fas fa-user-circle"></i>
+              <span>마이페이지</span>
+            </div>
+            <div class="nav-group-items">
+              <div class="nav-item" data-page="usage-history.html">
+                <i class="fas fa-history"></i>
+                <span>이용 내역</span>
+                <div class="nav-badge">0</div>
+              </div>
+              <div class="nav-item" data-page="point.html">
+                <i class="fas fa-coins"></i>
+                <span>보증 포인트</span>
+                <div class="nav-badge point">100P</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="quick-stats">
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <div class="stat-info">
+                <span class="stat-label">이용 시간</span>
+                <span class="stat-value">2시간 30분</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <!-- 배너 -->
+      <div class="banner">
+        <div class="banner-content">
+          <div class="banner-text">
+            <h1>마이페이지</h1>
+            <p>개인 정보 및 이용 현황을 확인하세요</p>
+          </div>
+          <div class="banner-decoration">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-container">
+        <!-- 프로필 카드 -->
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar">
+              <img src="/placeholder.svg?height=80&width=80" alt="프로필 이미지" class="avatar-img">
+              <div class="avatar-status"></div>
+            </div>
+            <div class="profile-info">
+              <h2 class="profile-name">권민서</h2>
+              <p class="profile-department">컴퓨터학부</p>
+              <div class="profile-stats">
+                <div class="stat">
+                  <span class="stat-number">12</span>
+                  <span class="stat-label">총 이용 횟수</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-number">24h</span>
+                  <span class="stat-label">총 이용 시간</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 온도 게이지 -->
+          <div class="temperature-section">
+            <div class="temperature-header">
+              <h3>
+                <i class="fas fa-thermometer-half"></i>
+                현재 온도
+              </h3>
+              <div class="temperature-value">
+                <span class="temp-number">36.5</span>
+                <span class="temp-unit">°C</span>
+              </div>
+            </div>
+            
+            <div class="temperature-gauge">
+              <div class="gauge-track">
+                <div class="gauge-fill" style="width: 36.5%;"></div>
+                <div class="gauge-markers">
+                  <div class="marker" style="left: 20%;"></div>
+                  <div class="marker" style="left: 40%;"></div>
+                  <div class="marker" style="left: 60%;"></div>
+                  <div class="marker" style="left: 80%;"></div>
+                </div>
+              </div>
+              <div class="gauge-labels">
+                <span>0°</span>
+                <span>25°</span>
+                <span>50°</span>
+                <span>75°</span>
+                <span>100°</span>
+              </div>
+            </div>
+
+            <div class="temperature-description">
+              <p>온도는 강의실 이용 빈도와 매너 점수를 종합하여 산정됩니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 퀵 액션 카드 -->
+        <div class="quick-actions">
+          <h3>빠른 실행</h3>
+          <div class="action-grid">
+            <div class="action-card" data-tab="usage">
+              <div class="action-icon">
+                <i class="fas fa-history"></i>
+              </div>
+              <div class="action-content">
+                <h4>이용 내역</h4>
+                <p>강의실 사용 기록 확인</p>
+                <div class="action-badge">0건</div>
+              </div>
+              <div class="action-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+
+            <div class="action-card" data-tab="points">
+              <div class="action-icon">
+                <i class="fas fa-coins"></i>
+              </div>
+              <div class="action-content">
+                <h4>보증 포인트</h4>
+                <p>포인트 현황 및 관리</p>
+                <div class="action-badge point">100P</div>
+              </div>
+              <div class="action-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+  <!-- 알림 토스트 -->
+  <div class="toast" id="toast">
+    <div class="toast-content">
+      <i class="toast-icon"></i>
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="mypage.js"></script>
+</body>
+</html>

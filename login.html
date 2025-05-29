@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인 – Kyungpook University</title>
+  <link rel="stylesheet" href="login.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="frame">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-placeholder">
+            <img src = "kyungpook_emblem.jpg">
+          </div>
+          <div class="university-name">Kyungpook University</div>
+        </div>
+        <div class="header-actions">
+          <!--<button class="help-btn" title="도움말"> -->
+           <!--<i class="fas fa-question-circle"></i>
+          </button>--> 
+        </div>
+      </div>
+    </header>
+
+    <!-- 사이드 네비게이션 -->
+    <nav class="sidebar">
+      <div class="sidebar-content">
+        <div class="nav-section">
+          <div class="nav-item active">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>로그인</span>
+          </div>
+        </div>
+        <div class="sidebar-footer">
+          <div class="mascot-area">
+            <i class="fas fa-graduation-cap mascot-icon"></i>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 배너 -->
+    <div class="banner">
+      <div class="banner-content">
+        <div class="banner-text">
+          <h1>Kyungpook University</h1>
+          <h2>RESERVATION SYSTEM</h2>
+          <p>IT Building 1 & 5</p>
+        </div>
+        <div class="banner-decoration">
+          <div class="floating-element"></div>
+          <div class="floating-element"></div>
+          <div class="floating-element"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <div class="login-container">
+        <div class="login-card">
+          <div class="card-header">
+            <h3>로그인</h3>
+            <p>계정 정보를 입력해주세요</p>
+          </div>
+          
+          <form class="login-form" id="loginForm">
+            <div class="form-group">
+              <label for="username">사용자명</label>
+              <div class="input-wrapper">
+                <i class="fas fa-user"></i>
+                <input 
+                  type="text" 
+                  id="username" 
+                  placeholder="사용자명을 입력하세요"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <span class="error-message" id="usernameError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="studentNumber">학번</label>
+              <div class="input-wrapper">
+                <i class="fas fa-graduation-cap"></i>
+                <input 
+                  type="text" 
+                  id="studentNumber" 
+                  placeholder="학번을 입력하세요"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <span class="error-message" id="studentNumberError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">전화번호</label>
+              <div class="input-wrapper">
+                <i class="fas fa-phone"></i>
+                <input 
+                  type="tel" 
+                  id="phoneNumber" 
+                  placeholder="010-0000-0000"
+                  required
+                />
+                <div class="input-line"></div>
+              </div>
+              <span class="error-message" id="phoneNumberError"></span>
+            </div>
+
+            <button type="submit" class="signin-button">
+              <span class="button-text">로그인</span>
+              <div class="button-loader">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+            </button>
+          </form>
+
+          <div class="card-footer">
+            <div class="help-links">
+              <a href="#" class="help-link">계정을 잊으셨나요?</a>
+              <a href="#" class="help-link">문의하기</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 알림 토스트 -->
+  <div class="toast" id="toast">
+    <div class="toast-content">
+      <i class="toast-icon"></i>
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
