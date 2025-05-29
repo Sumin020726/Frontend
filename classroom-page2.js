@@ -42,12 +42,14 @@ class ClassroomPageSystem {
   }
 
   bindEvents() {
+    
     // 사진 업로드 영역 클릭
     if (this.elements.photoUploadArea) {
       this.elements.photoUploadArea.addEventListener("click", () => {
         this.elements.photoInput.click()
       })
     }
+
 
     // 파일 선택
     if (this.elements.photoInput) {
@@ -235,7 +237,7 @@ class ClassroomPageSystem {
         this.isAuthenticated = true
         this.showAuthSuccessModal()
       } else {
-        this.showToast("인증에 실패했습니다. 강의실 내부가 잘 보이도록 다시 촬영해주세요.", "error")
+        this.showToast("인증에 실패했습니다. 다시 촬영해주세요.", "error")
         this.resetPhotoUpload()
       }
 

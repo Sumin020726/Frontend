@@ -71,10 +71,9 @@ body {
   gap: 16px;
 }
 
-.logo-placeholder {
+.logo-placeholder img{
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;

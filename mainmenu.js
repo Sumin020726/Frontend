@@ -33,6 +33,11 @@ class MainMenuSystem {
     this.navItems.forEach((item) => {
       item.addEventListener("click", (e) => this.handleNavigation(e, item))
     })
+    this.navHeaders = document.querySelectorAll(".nav-group-header")
+    this.navHeaders.forEach((header) => {
+    header.addEventListener("click", (e) => this.handleNavigation(e, header))
+    })
+
 
     // 건물 카드 클릭
     this.buildingCards.forEach((card) => {
@@ -476,12 +481,4 @@ document.querySelectorAll('.sidebar-button, .sidebar-sub').forEach(btn => {
   }
 });
 
-// 마이페이지 버튼 직접 연결 (각 JS 파일 끝에 추가)
-document.addEventListener('DOMContentLoaded', () => {
-  const mypageBtn = document.querySelector('.sidebar-button.group-title:nth-of-type(4)'); // 마이페이지 버튼
-  if (mypageBtn && mypageBtn.textContent.includes('마이페이지')) {
-    mypageBtn.addEventListener('click', () => {
-      window.location.href = 'mypage.html';
-    });
-  }
-});
+

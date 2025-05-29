@@ -96,6 +96,11 @@ class ClassroomSystem {
       this.searchTerm = e.target.value.toLowerCase()
       this.renderClassrooms()
     })
+    this.navHeaders = document.querySelectorAll(".nav-group-header")
+    this.navHeaders.forEach((header) => {
+    header.addEventListener("click", (e) => this.handleNavigation(e, header))
+    })
+
 
     // 새로고침 버튼
     this.elements.refreshBtn.addEventListener("click", () => this.refreshData())
@@ -358,7 +363,7 @@ class ClassroomSystem {
 
       setTimeout(() => {
         // 강의실 페이지로 이동 + room 이름 URL 파라미터로 전달
-        this.navigateWithAnimation(`classroom-page1.html?room=${encodeURIComponent(room.name)}`)
+        this.navigateWithAnimation(`classroom-page2.html?room=${encodeURIComponent(room.name)}`)
       }, 500)
     }
   }

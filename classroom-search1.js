@@ -95,6 +95,10 @@ class ClassroomSystem {
       this.searchTerm = e.target.value.toLowerCase()
       this.renderClassrooms()
     })
+    this.navHeaders = document.querySelectorAll(".nav-group-header")
+    this.navHeaders.forEach((header) => {
+    header.addEventListener("click", (e) => this.handleNavigation(e, header))
+    })
 
     // 새로고침 버튼
     this.elements.refreshBtn.addEventListener("click", () => this.refreshData())
