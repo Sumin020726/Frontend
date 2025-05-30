@@ -1,6 +1,6 @@
-//classroom-search2.js
+//classroom-search2.js - 잠금된 강의실 입장 제한 추가
 
-// 세련된 강의실 목록 시스템 (모든 강의실 입장 가능)
+// 세련된 강의실 목록 시스템
 
 class ClassroomSystem {
   constructor() {
@@ -98,9 +98,8 @@ class ClassroomSystem {
     })
     this.navHeaders = document.querySelectorAll(".nav-group-header")
     this.navHeaders.forEach((header) => {
-    header.addEventListener("click", (e) => this.handleNavigation(e, header))
+      header.addEventListener("click", (e) => this.handleNavigation(e, header))
     })
-
 
     // 새로고침 버튼
     this.elements.refreshBtn.addEventListener("click", () => this.refreshData())
@@ -169,6 +168,11 @@ class ClassroomSystem {
         const roomId = entryBtn.dataset.roomId
         const room = this.classrooms.find((r) => r.id === Number.parseInt(roomId))
         if (room) {
+          // 잠금된 강의실 입장 제한 검사
+          if (room.isLocked) {
+            this.showToast("잠금된 강의실은 입장할 수 없습니다.", "error")
+            return
+          }
           this.openEntryModal(room)
         }
       }
@@ -240,7 +244,11 @@ class ClassroomSystem {
         const inUseText = room.inUse ? "사용 중" : "미사용"
         const inUseClass = room.inUse ? "status-in-use" : "status-not-in-use"
 
-        // 모든 강의실 입장 가능 (버튼 항상 활성화)
+        // 잠금된 강의실은 입장 버튼 비활성화
+        const isEntryDisabled = room.isLocked
+        const entryBtnClass = isEntryDisabled ? "entry-btn disabled" : "entry-btn"
+        const entryBtnDisabled = isEntryDisabled ? "disabled" : ""
+
         html += `
           <tr class="classroom-row" data-room-id="${room.id}">
             <td>${room.name}</td>
@@ -260,9 +268,9 @@ class ClassroomSystem {
               </div>
             </td>
             <td>
-              <button class="entry-btn" data-room-id="${room.id}">
+              <button class="${entryBtnClass}" data-room-id="${room.id}" ${entryBtnDisabled}>
                 <i class="fas fa-sign-in-alt"></i>
-                <span>입장</span>
+                <span>${isEntryDisabled ? "입장 불가" : "입장"}</span>
               </button>
             </td>
           </tr>
@@ -416,8 +424,21 @@ class ClassroomSystem {
         100% { transform: scale(1); }
       }
 
-      .entry-btn:hover {\
+      .entry-btn:hover:not(.disabled) {
         animation: pulse 1s infinite;
+      }
+
+      .entry-btn.disabled {
+        background: #f5f5f5;
+        color: #999;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .entry-btn.disabled:hover {
+        background: #f5f5f5;
+        transform: none;
+        animation: none;
       }
 
       .refresh-btn i {

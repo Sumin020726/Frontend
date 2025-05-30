@@ -1,471 +1,473 @@
-//usage-history.js
-// 세련된 이용 내역 시스템
+// 이용 내역 페이지 스크립트 - 개선된 버전
+document.addEventListener("DOMContentLoaded", () => {
+  // DOM 요소 참조
+  const currentRoomCard = document.getElementById("current-room")
+  const emptyState = document.querySelector(".empty-state")
+  const toast = document.getElementById("toast")
+  const confirmModal = document.getElementById("confirmModal")
+  const modalTitle = document.getElementById("modal-title")
+  const modalMessage = document.getElementById("modal-message")
+  const modalCancel = document.getElementById("modal-cancel")
+  const modalConfirm = document.getElementById("modal-confirm")
+  const closeModalBtn = document.querySelector(".close-modal-btn")
+  const changeStatusBtn = document.getElementById("change-status-btn")
+  const cancelBtn = document.getElementById("cancel-btn")
+  const exitBtn = document.getElementById("exit-btn")
+  const roomStatus = document.getElementById("room-status")
+  const actionButtons = document.getElementById("action-buttons")
 
-class UsageHistorySystem {
-  constructor() {
-    this.currentStatus = "reserved" // reserved, active, completed
-    this.countdownInterval = null
+  // 로컬 스토리지에서 예약 정보 가져오기
+  let reservations = JSON.parse(localStorage.getItem("reservations")) || []
 
-    this.elements = {
-      roomStatus: document.getElementById("room-status"),
-      changeStatusBtn: document.getElementById("change-status-btn"),
-      cancelBtn: document.getElementById("cancel-btn"),
-      exitBtn: document.getElementById("exit-btn"),
-      countdown: document.getElementById("countdown"),
-      currentRoom: document.getElementById("current-room"),
-      toast: document.getElementById("toast"),
-      modal: document.getElementById("confirmModal"),
-      modalTitle: document.getElementById("modal-title"),
-      modalMessage: document.getElementById("modal-message"),
-      modalConfirm: document.getElementById("modal-confirm"),
-      modalCancel: document.getElementById("modal-cancel"),
-      closeModalBtn: document.querySelector(".close-modal-btn"),
+  // 예약 정보가 있는지 확인하고 UI 업데이트
+  updateUI()
+
+  // UI 업데이트 함수
+  function updateUI() {
+    // 최신 예약 정보 다시 가져오기
+    reservations = JSON.parse(localStorage.getItem("reservations")) || []
+
+    if (reservations.length > 0) {
+      // 가장 최근 활성 예약 정보 가져오기
+      const activeReservation = reservations.find((r) => r.status === "reserved" || r.status === "active")
+
+      if (activeReservation) {
+        // 현재 이용 중인 강의실 정보 업데이트
+        const roomDetails = currentRoomCard.querySelector(".room-details h3")
+        const roomDescription = currentRoomCard.querySelector(".room-details p")
+        roomDetails.textContent = activeReservation.roomName
+
+        // 강의실 타입 설정
+        if (activeReservation.roomName.includes("IT1")) {
+          roomDescription.textContent = "강의실 · 1층"
+        } else if (activeReservation.roomName.includes("IT5")) {
+          roomDescription.textContent = "컴퓨터실 · 2층"
+        } else {
+          roomDescription.textContent = "강의실"
+        }
+
+        // 예약 시간 정보 업데이트
+        const timelineValue = currentRoomCard.querySelector(".timeline-value")
+        timelineValue.textContent = `${activeReservation.date} ${activeReservation.startTime} ~ ${activeReservation.endTime}`
+
+        // 남은 시간 계산 및 표시
+        updateRemainingTime(activeReservation)
+
+        // 상태에 따른 UI 업데이트
+        updateStatusUI(activeReservation.status, activeReservation.type)
+
+        // 빈 상태 숨기고 현재 이용 중인 강의실 표시
+        emptyState.style.display = "none"
+        currentRoomCard.style.display = "block"
+      } else {
+        // 활성 예약이 없으면 빈 상태 표시
+        showEmptyState()
+      }
+
+      // 배지 업데이트
+      updateBadge()
+    } else {
+      // 예약 정보가 없으면 빈 상태 표시
+      showEmptyState()
     }
-
-    this.init()
   }
 
-  init() {
-    this.bindEvents()
-    this.startCountdown()
-    this.addAnimations()
+  // 빈 상태 표시 함수
+  function showEmptyState() {
+    emptyState.style.display = "block"
+    currentRoomCard.style.display = "none"
+
+    // 배지 숨기기
+    const historyBadge = document.querySelector('.nav-item[data-page="usage-history.html"] .nav-badge')
+    if (historyBadge) {
+      historyBadge.style.display = "none"
+    }
   }
 
-  bindEvents() {
-    // 사용 중 변경 버튼
-    if (this.elements.changeStatusBtn) {
-      this.elements.changeStatusBtn.addEventListener("click", () => {
-        this.showConfirmModal("사용 중 변경", "강의실 사용을 시작하시겠습니까?", () => this.changeToActive())
-      })
+  // 배지 업데이트 함수
+  function updateBadge() {
+    const historyBadge = document.querySelector('.nav-item[data-page="usage-history.html"] .nav-badge')
+    if (historyBadge) {
+      const activeReservations = reservations.filter((r) => r.status === "reserved" || r.status === "active")
+      if (activeReservations.length > 0) {
+        historyBadge.textContent = activeReservations.length
+        historyBadge.style.display = "flex"
+      } else {
+        historyBadge.style.display = "none"
+      }
     }
+  }
 
-    // 예약 취소 버튼
-    if (this.elements.cancelBtn) {
-      this.elements.cancelBtn.addEventListener("click", () => {
-        this.showConfirmModal("예약 취소", "정말 예약을 취소하시겠습니까?\n취소된 예약은 복구할 수 없습니다.", () =>
-          this.cancelReservation(),
-        )
-      })
-    }
+  // 남은 시간 업데이트 함수 (NaN 오류 수정)
+  function updateRemainingTime(reservation) {
+    const countdown = document.getElementById("countdown")
 
-    // 퇴실 인증 버튼
-    if (this.elements.exitBtn) {
-      this.elements.exitBtn.addEventListener("click", () => {
-        this.showConfirmModal("퇴실 인증", "퇴실 인증을 진행하시겠습니까?\n인증 후 강의실 이용이 종료됩니다.", () =>
-          this.exitRoom(),
-        )
-      })
-    }
+    try {
+      // 현재 시간
+      const now = new Date()
 
-    // 모달 이벤트
-    if (this.elements.modalCancel) {
-      this.elements.modalCancel.addEventListener("click", () => this.closeModal())
-    }
+      // 예약 종료 시간 파싱 (안전한 파싱)
+      if (!reservation.endTime || reservation.endTime === "미정") {
+        countdown.textContent = "진행 중"
+        countdown.style.color = "var(--success-color)"
+        return
+      }
 
-    if (this.elements.closeModalBtn) {
-      this.elements.closeModalBtn.addEventListener("click", () => this.closeModal())
-    }
+      const timeParts = reservation.endTime.split(":")
+      if (timeParts.length !== 2) {
+        countdown.textContent = "시간 오류"
+        countdown.style.color = "var(--error-color)"
+        return
+      }
 
-    // 네비게이션 아이템 클릭
-    document.querySelectorAll(".nav-item").forEach((item) => {
-      item.addEventListener("click", () => {
-        const page = item.dataset.page
-        if (page) {
-          this.navigateWithAnimation(page)
+      const hours = Number.parseInt(timeParts[0], 10)
+      const minutes = Number.parseInt(timeParts[1], 10)
+
+      // 유효한 시간인지 확인
+      if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+        countdown.textContent = "시간 오류"
+        countdown.style.color = "var(--error-color)"
+        return
+      }
+
+      const endTime = new Date()
+      endTime.setHours(hours, minutes, 0, 0)
+
+      // 남은 시간 계산 (밀리초)
+      const remainingTime = endTime - now
+
+      if (remainingTime <= 0) {
+        countdown.textContent = "종료됨"
+        countdown.style.color = "var(--error-color)"
+        return
+      }
+
+      // 남은 시간을 시간과 분으로 변환
+      const remainingHours = Math.floor(remainingTime / (1000 * 60 * 60))
+      const remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60))
+
+      if (remainingHours > 0) {
+        countdown.textContent = `약 ${remainingHours}시간 ${remainingMinutes}분`
+      } else {
+        countdown.textContent = `약 ${remainingMinutes}분`
+      }
+
+      // 30분 이하일 때 경고 색상
+      if (remainingTime <= 30 * 60 * 1000) {
+        countdown.style.color = "var(--error-color)"
+      } else if (remainingTime <= 60 * 60 * 1000) {
+        countdown.style.color = "var(--warning-color)"
+      } else {
+        countdown.style.color = "var(--success-color)"
+      }
+
+      // 1분마다 남은 시간 업데이트
+      setTimeout(() => {
+        const currentReservations = JSON.parse(localStorage.getItem("reservations")) || []
+        const activeReservation = currentReservations.find((r) => r.status === "reserved" || r.status === "active")
+        if (activeReservation) {
+          updateRemainingTime(activeReservation)
         }
-      })
+      }, 60000)
+    } catch (error) {
+      console.error("시간 계산 오류:", error)
+      countdown.textContent = "시간 오류"
+      countdown.style.color = "var(--error-color)"
+    }
+  }
+
+  // 상태에 따른 UI 업데이트 함수
+  function updateStatusUI(status, type) {
+    if (status === "reserved") {
+      roomStatus.className = "room-status-badge status-reserved"
+      roomStatus.innerHTML = '<i class="fas fa-calendar-check"></i><span>예약</span>'
+
+      changeStatusBtn.style.display = "block"
+      cancelBtn.style.display = "block"
+      exitBtn.style.display = "none"
+    } else if (status === "active") {
+      roomStatus.className = "room-status-badge status-active"
+      roomStatus.innerHTML = '<i class="fas fa-play-circle"></i><span>사용 중</span>'
+
+      changeStatusBtn.style.display = "none"
+      cancelBtn.style.display = "none" // 사용 중일 때는 예약 취소 버튼 숨김
+      exitBtn.style.display = "block"
+    }
+  }
+
+  // 사용 중 변경 버튼 클릭 이벤트 (사진 업로드 필요)
+  changeStatusBtn.addEventListener("click", () => {
+    showPhotoUploadModal("사용 중 변경", "강의실 사용을 시작하시겠습니까?", (photoFile) => {
+      reservations = JSON.parse(localStorage.getItem("reservations")) || []
+      const activeReservation = reservations.find((r) => r.status === "reserved")
+      if (activeReservation) {
+        activeReservation.status = "active"
+        activeReservation.actualStartTime = new Date().getTime()
+        localStorage.setItem("reservations", JSON.stringify(reservations))
+        updateStatusUI("active", activeReservation.type)
+        showToast("success", "상태가 사용 중으로 변경되었습니다.")
+        updateUI()
+      }
+    })
+  })
+
+  // 예약 취소 버튼 클릭 이벤트
+  cancelBtn.addEventListener("click", () => {
+    showConfirmModal("예약 취소", "정말 예약을 취소하시겠습니까?", () => {
+      reservations = JSON.parse(localStorage.getItem("reservations")) || []
+      const activeIndex = reservations.findIndex((r) => r.status === "reserved")
+      if (activeIndex !== -1) {
+        reservations.splice(activeIndex, 1) // 해당 예약 제거
+        localStorage.setItem("reservations", JSON.stringify(reservations))
+        updateUI()
+        showToast("info", "예약이 취소되었습니다.")
+      }
+    })
+  })
+
+  // 퇴실 인증 버튼 클릭 이벤트 (사진 업로드 필요) - 완료 후 목록에서 제거
+  exitBtn.addEventListener("click", () => {
+    showPhotoUploadModal("퇴실 인증", "퇴실 인증을 진행하시겠습니까?", (photoFile) => {
+      reservations = JSON.parse(localStorage.getItem("reservations")) || []
+      const activeIndex = reservations.findIndex((r) => r.status === "active")
+      if (activeIndex !== -1) {
+        // 퇴실 인증 완료 시 목록에서 완전히 제거
+        reservations.splice(activeIndex, 1)
+        localStorage.setItem("reservations", JSON.stringify(reservations))
+        updateUI()
+        showToast("success", "퇴실 인증이 완료되었습니다.")
+      }
+    })
+  })
+
+  // 사진 업로드 모달 표시 함수
+  function showPhotoUploadModal(title, message, onConfirm) {
+    const modalHTML = `
+      <div class="photo-upload-modal" id="photoUploadModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease;">
+        <div class="modal-overlay-custom">
+          <div class="modal-box-custom" style="background: white; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative;">
+            <div class="modal-header" style="text-align: left; padding: 20px 20px 0 20px; display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);">${title}</h3>
+              <button class="close-modal-btn" onclick="window.closePhotoModal()" style="background: none; border: none; font-size: 20px; cursor: pointer;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+              <p style="margin-bottom: 20px; color: var(--text-primary);">${message}</p>
+              <p style="margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">인증을 위해 강의실 내부 사진을 업로드해주세요.</p>
+              
+              <div class="photo-upload-area-modal" id="photoUploadAreaModal" style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                <div class="upload-placeholder">
+                  <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--text-secondary); margin-bottom: 12px;"></i>
+                  <p style="margin: 0 0 4px 0; font-weight: 500; color: var(--text-primary);">사진을 업로드하거나 여기를 클릭하세요</p>
+                  <span style="font-size: 12px; color: var(--text-secondary);">JPG, PNG 파일만 가능 (최대 5MB)</span>
+                </div>
+                <input type="file" id="photoInputModal" accept="image/*" style="display: none;">
+              </div>
+            </div>
+            <div class="modal-footer" style="padding: 0 20px 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+              <button class="btn-secondary" onclick="window.closePhotoModal()" style="padding: 10px 20px; background: var(--background-color); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">취소</button>
+              <button class="btn-primary" id="confirmPhotoBtn" disabled style="padding: 10px 20px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; opacity: 0.7;">확인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+
+    document.body.insertAdjacentHTML("beforeend", modalHTML)
+    document.body.style.overflow = "hidden"
+
+    const modal = document.getElementById("photoUploadModal")
+    const photoUploadAreaModal = document.getElementById("photoUploadAreaModal")
+    const photoInputModal = document.getElementById("photoInputModal")
+    const confirmPhotoBtn = document.getElementById("confirmPhotoBtn")
+
+    // 사진 업로드 영역 클릭 이벤트
+    photoUploadAreaModal.addEventListener("click", () => {
+      photoInputModal.click()
     })
 
-    // 네비게이션 그룹 헤더 클릭
-    document.querySelectorAll(".nav-group-header").forEach((header) => {
-      header.addEventListener("click", () => {
-        const page = header.dataset.page
-        if (page) {
-          this.navigateWithAnimation(page)
+    // 파일 선택 이벤트
+    photoInputModal.addEventListener("change", function () {
+      if (this.files && this.files[0]) {
+        const file = this.files[0]
+
+        // 파일 유효성 검사
+        if (!file.type.startsWith("image/")) {
+          showToast("error", "이미지 파일만 업로드 가능합니다.")
+          return
         }
-      })
+
+        if (file.size > 5 * 1024 * 1024) {
+          showToast("error", "파일 크기는 5MB 이하여야 합니다.")
+          return
+        }
+
+        // 미리보기 표시
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          photoUploadAreaModal.innerHTML = `
+            <div class="upload-success">
+              <img src="${e.target.result}" alt="업로드된 이미지" style="max-width: 100%; max-height: 150px; border-radius: 8px; margin-bottom: 8px;">
+              <p style="margin: 8px 0; color: var(--success-color);"><i class="fas fa-check-circle"></i> 사진이 업로드되었습니다</p>
+              <button type="button" onclick="window.resetPhotoModalUpload()" style="padding: 4px 8px; background: var(--background-color); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; font-size: 12px;">사진 변경</button>
+            </div>
+          `
+        }
+        reader.readAsDataURL(file)
+
+        confirmPhotoBtn.disabled = false
+        confirmPhotoBtn.style.opacity = "1"
+      }
     })
 
-    // 로그아웃 버튼
-    document.querySelector(".logout-btn").addEventListener("click", () => {
-      if (confirm("정말 로그아웃하시겠습니까?")) {
-        this.showToast("로그아웃 중입니다...", "info")
+    // 확인 버튼 클릭 이벤트
+    confirmPhotoBtn.addEventListener("click", () => {
+      if (photoInputModal.files[0]) {
+        // 로딩 상태
+        confirmPhotoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...'
+        confirmPhotoBtn.disabled = true
+
+        // 인증 시뮬레이션
         setTimeout(() => {
-          this.navigateWithAnimation("login.html")
+          onConfirm(photoInputModal.files[0])
+          window.closePhotoModal()
         }, 1500)
       }
     })
 
-    // 전체 보기 버튼
-    document.querySelector(".view-all-btn")?.addEventListener("click", () => {
-      this.showToast("전체 이용 내역 기능을 준비 중입니다.", "info")
-    })
-
-    // 빈 상태 액션 버튼
-    document.querySelector(".empty-action-btn")?.addEventListener("click", () => {
-      this.navigateWithAnimation("classroom-search1.html")
-    })
-
-    // 키보드 단축키
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        this.closeModal()
-      }
-
-      // Ctrl + 1: 사용 중 변경
-      if (e.ctrlKey && e.key === "1" && this.currentStatus === "reserved") {
-        e.preventDefault()
-        this.elements.changeStatusBtn.click()
-      }
-
-      // Ctrl + 2: 예약 취소
-      if (e.ctrlKey && e.key === "2" && this.currentStatus === "reserved") {
-        e.preventDefault()
-        this.elements.cancelBtn.click()
-      }
-
-      // Ctrl + 3: 퇴실 인증
-      if (e.ctrlKey && e.key === "3") {
-        e.preventDefault()
-        this.elements.exitBtn.click()
-      }
-    })
-  }
-
-  changeToActive() {
-    this.currentStatus = "active"
-
-    // 상태 표시 업데이트
-    if (this.elements.roomStatus) {
-      this.elements.roomStatus.innerHTML = `
-        <i class="fas fa-play"></i>
-        <span>사용 중</span>
-      `
-      this.elements.roomStatus.classList.remove("status-reserved")
-      this.elements.roomStatus.classList.add("status-active")
-    }
-
-    // 사용 중 변경 버튼 숨기기
-    if (this.elements.changeStatusBtn) {
-      this.elements.changeStatusBtn.style.display = "none"
-    }
-
-    // 예약 취소 버튼 비활성화
-    if (this.elements.cancelBtn) {
-      this.elements.cancelBtn.disabled = true
-      this.elements.cancelBtn.style.opacity = "0.5"
-      this.elements.cancelBtn.style.cursor = "not-allowed"
-    }
-
-    this.showToast("강의실 사용이 시작되었습니다!", "success")
-    this.closeModal()
-  }
-
-  cancelReservation() {
-    // 현재 이용 중인 강의실 카드 제거
-    if (this.elements.currentRoom) {
-      this.elements.currentRoom.style.transition = "all 0.5s ease-out"
-      this.elements.currentRoom.style.transform = "translateX(-100%)"
-      this.elements.currentRoom.style.opacity = "0"
-
-      setTimeout(() => {
-        this.elements.currentRoom.remove()
-        this.showEmptyState()
-      }, 500)
-    }
-
-    // 카운트다운 중지
-    if (this.countdownInterval) {
-      clearInterval(this.countdownInterval)
-    }
-
-    this.showToast("예약이 취소되었습니다.", "info")
-    this.closeModal()
-  }
-
-  exitRoom() {
-    // 현재 이용 중인 강의실 카드 제거
-    if (this.elements.currentRoom) {
-      this.elements.currentRoom.style.transition = "all 0.5s ease-out"
-      this.elements.currentRoom.style.transform = "scale(0.8)"
-      this.elements.currentRoom.style.opacity = "0"
-
-      setTimeout(() => {
-        this.elements.currentRoom.remove()
-        this.showEmptyState()
-      }, 500)
-    }
-
-    // 카운트다운 중지
-    if (this.countdownInterval) {
-      clearInterval(this.countdownInterval)
-    }
-
-    this.showToast("퇴실 인증이 완료되었습니다!", "success")
-    this.closeModal()
-  }
-
-  showEmptyState() {
-    const currentSection = document.querySelector(".current-usage-section")
-    if (currentSection) {
-      currentSection.innerHTML = `
-        <div class="section-header">
-          <h2>
-            <i class="fas fa-door-open"></i>
-            현재 이용 중
-          </h2>
-        </div>
-        <div class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <h3>현재 이용 중인 강의실이 없습니다</h3>
-          <p>강의실을 예약하고 이용해보세요!</p>
-          <button class="empty-action-btn" onclick="window.location.href='classroom-search1.html'">
-            <i class="fas fa-plus"></i>
-            <span>강의실 예약하기</span>
-          </button>
+    // 사진 업로드 초기화 함수
+    window.resetPhotoModalUpload = () => {
+      photoUploadAreaModal.innerHTML = `
+        <div class="upload-placeholder">
+          <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--text-secondary); margin-bottom: 12px;"></i>
+          <p style="margin: 0 0 4px 0; font-weight: 500; color: var(--text-primary);">사진을 업로드하거나 여기를 클릭하세요</p>
+          <span style="font-size: 12px; color: var(--text-secondary);">JPG, PNG 파일만 가능 (최대 5MB)</span>
         </div>
       `
-    }
-  }
-
-  startCountdown() {
-    // 예시: 1시간 20분 = 80분
-    let remainingMinutes = 80
-
-    this.countdownInterval = setInterval(() => {
-      if (remainingMinutes <= 0) {
-        clearInterval(this.countdownInterval)
-        this.elements.countdown.textContent = "시간 종료"
-        this.elements.countdown.style.color = "var(--error-color)"
-        return
-      }
-
-      const hours = Math.floor(remainingMinutes / 60)
-      const minutes = remainingMinutes % 60
-
-      let timeText = ""
-      if (hours > 0) {
-        timeText = `약 ${hours}시간 ${minutes}분`
-      } else {
-        timeText = `약 ${minutes}분`
-      }
-
-      if (this.elements.countdown) {
-        this.elements.countdown.textContent = timeText
-      }
-
-      // 30분 이하일 때 경고 색상
-      if (remainingMinutes <= 30) {
-        this.elements.countdown.style.color = "var(--error-color)"
-      } else if (remainingMinutes <= 60) {
-        this.elements.countdown.style.color = "var(--warning-color)"
-      }
-
-      remainingMinutes--
-    }, 60000) // 1분마다 업데이트 (실제로는 1초마다 할 수도 있음)
-  }
-
-  showConfirmModal(title, message, onConfirm) {
-    if (this.elements.modalTitle) {
-      this.elements.modalTitle.textContent = title
+      photoInputModal.value = ""
+      confirmPhotoBtn.disabled = true
+      confirmPhotoBtn.style.opacity = "0.7"
     }
 
-    if (this.elements.modalMessage) {
-      this.elements.modalMessage.textContent = message
+    // 모달 닫기 함수
+    window.closePhotoModal = () => {
+      const modal = document.getElementById("photoUploadModal")
+      if (modal) {
+        modal.remove()
+        document.body.style.overflow = ""
+      }
     }
 
-    // 기존 이벤트 리스너 제거 후 새로 추가
-    if (this.elements.modalConfirm) {
-      const newConfirmBtn = this.elements.modalConfirm.cloneNode(true)
-      this.elements.modalConfirm.parentNode.replaceChild(newConfirmBtn, this.elements.modalConfirm)
-      this.elements.modalConfirm = newConfirmBtn
-
-      this.elements.modalConfirm.addEventListener("click", () => {
-        onConfirm()
-      })
-    }
-
-    this.elements.modal.classList.add("show")
-    document.body.style.overflow = "hidden"
+    // 애니메이션 효과
+    setTimeout(() => {
+      modal.style.opacity = "1"
+    }, 10)
   }
 
-  closeModal() {
-    this.elements.modal.classList.remove("show")
-    document.body.style.overflow = ""
-  }
+  // 확인 모달 표시 함수
+  function showConfirmModal(title, message, confirmCallback) {
+    modalTitle.textContent = title
+    modalMessage.textContent = message
 
-  addAnimations() {
-    // 카드 애니메이션 관찰자
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.style.animationDelay = `${entry.target.dataset.delay || 0}ms`
-          entry.target.classList.add("animate-in")
-        }
-      })
+    // 기존 이벤트 리스너 제거
+    const newModalConfirm = modalConfirm.cloneNode(true)
+    const newModalCancel = modalCancel.cloneNode(true)
+    modalConfirm.parentNode.replaceChild(newModalConfirm, modalConfirm)
+    modalCancel.parentNode.replaceChild(newModalCancel, modalCancel)
+
+    // 새 이벤트 리스너 추가
+    newModalConfirm.addEventListener("click", () => {
+      confirmCallback()
+      confirmModal.classList.remove("show")
     })
 
-    // 섹션들에 애니메이션 적용
-    document
-      .querySelectorAll(".current-usage-section, .usage-stats-section, .recent-history-section")
-      .forEach((section, index) => {
-        section.dataset.delay = index * 200
-        observer.observe(section)
-      })
-
-    // 통계 카드 호버 효과
-    document.querySelectorAll(".stat-card").forEach((card) => {
-      card.addEventListener("mouseenter", () => {
-        card.style.transform = "translateY(-8px) scale(1.02)"
-      })
-
-      card.addEventListener("mouseleave", () => {
-        card.style.transform = "translateY(0) scale(1)"
-      })
+    newModalCancel.addEventListener("click", () => {
+      confirmModal.classList.remove("show")
     })
 
-    // 히스토리 아이템 애니메이션
-    this.animateHistoryItems()
+    confirmModal.classList.add("show")
   }
 
-  animateHistoryItems() {
-    const items = document.querySelectorAll(".history-item")
-    items.forEach((item, index) => {
-      item.style.opacity = "0"
-      item.style.transform = "translateX(-20px)"
-      setTimeout(() => {
-        item.style.transition = "all 0.3s ease"
-        item.style.opacity = "1"
-        item.style.transform = "translateX(0)"
-      }, index * 100)
+  // 모달 닫기 버튼 이벤트
+  closeModalBtn.addEventListener("click", () => {
+    confirmModal.classList.remove("show")
+  })
+
+  // 빈 상태의 예약하기 버튼 클릭 이벤트
+  const emptyActionBtn = document.querySelector(".empty-action-btn")
+  if (emptyActionBtn) {
+    emptyActionBtn.addEventListener("click", () => {
+      window.location.href = "classroom-page1.html"
     })
   }
 
-  showToast(message, type = "info") {
-    const toast = this.elements.toast
-    if (!toast) return
-
+  // 토스트 메시지 표시 함수
+  function showToast(type, message) {
     const toastIcon = toast.querySelector(".toast-icon")
     const toastMessage = toast.querySelector(".toast-message")
 
-    // 아이콘 설정
-    const icons = {
-      success: "fas fa-check-circle",
-      error: "fas fa-exclamation-circle",
-      warning: "fas fa-exclamation-triangle",
-      info: "fas fa-info-circle",
+    toast.className = "toast"
+    toast.classList.add(type)
+
+    if (type === "success") {
+      toastIcon.className = "toast-icon fas fa-check-circle"
+    } else if (type === "error") {
+      toastIcon.className = "toast-icon fas fa-exclamation-circle"
+    } else if (type === "info") {
+      toastIcon.className = "toast-icon fas fa-info-circle"
     }
 
-    toastIcon.className = `toast-icon ${icons[type] || icons.info}`
     toastMessage.textContent = message
-
-    // 토스트 타입 클래스 설정
-    toast.className = `toast ${type}`
-
-    // 토스트 표시
     toast.classList.add("show")
 
-    // 자동 숨김
     setTimeout(() => {
       toast.classList.remove("show")
-    }, 4000)
+    }, 3000)
   }
 
-  navigateWithAnimation(page) {
-    // 페이지 전환 애니메이션
-    document.body.style.transition = "opacity 0.3s ease-out"
-    document.body.style.opacity = "0.7"
+  // 네비게이션 아이템 클릭 이벤트 (페이지 이동)
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const page = item.dataset.page
+      if (page) {
+        window.location.href = page
+      }
+    })
+  })
 
-    setTimeout(() => {
-      window.location.href = page
-    }, 300)
-  }
-}
+  // 네비게이션 그룹 헤더 클릭 이벤트 (페이지 이동)
+  document.querySelectorAll(".nav-group-header").forEach((header) => {
+    header.addEventListener("click", () => {
+      const page = header.dataset.page
+      if (page) {
+        window.location.href = page
+      }
+    })
+  })
 
-// CSS 애니메이션 추가
-const style = document.createElement("style")
-style.textContent = `
-  .action-btn {
-    position: relative;
-    overflow: hidden;
+  // 로그아웃 버튼 클릭 이벤트
+  const logoutBtn = document.querySelector(".logout-btn")
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      if (confirm("정말 로그아웃하시겠습니까?")) {
+        showToast("info", "로그아웃 중입니다...")
+        setTimeout(() => {
+          window.location.href = "login.html"
+        }, 1500)
+      }
+    })
   }
-  
-  .action-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-  }
-  
-  .action-btn:hover::before {
-    left: 100%;
-  }
-  
-  .stat-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .history-item {
-    transition: all 0.3s ease;
-  }
-  
-  .room-icon {
-    animation: doorOpen 2s ease-in-out infinite;
-  }
-  
-  @keyframes doorOpen {
-    0%, 100% { transform: rotateY(0deg); }
-    50% { transform: rotateY(15deg); }
-  }
-`
-document.head.appendChild(style)
 
-// 페이지 로드 완료 후 초기화
-document.addEventListener("DOMContentLoaded", () => {
-  const usageHistorySystem = new UsageHistorySystem()
+  // 페이지 포커스 시 UI 업데이트 (다른 페이지에서 돌아왔을 때)
+  window.addEventListener("focus", () => {
+    updateUI()
+  })
 
-  // 페이지 로드 애니메이션
-  document.body.style.opacity = "0"
-  document.body.style.transition = "opacity 0.5s ease-in"
-
-  setTimeout(() => {
-    document.body.style.opacity = "1"
-  }, 100)
-
-  // 환영 메시지
-  setTimeout(() => {
-    usageHistorySystem.showToast("이용 내역 페이지에 오신 것을 환영합니다!", "success")
-  }, 1000)
-})
-
-// 브라우저 뒤로가기 처리
-window.addEventListener("popstate", (e) => {
-  // 필요시 상태 복원 로직 추가
-})
-
-// 페이지 가시성 변경 처리
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    // 페이지가 숨겨졌을 때
-    console.log("Page hidden")
-  } else {
-    // 페이지가 다시 보일 때
-    console.log("Page visible")
-    // 실시간 데이터 새로고침
-    if (window.usageHistorySystem) {
-      window.usageHistorySystem.startCountdown()
+  // localStorage 변경 감지 (같은 도메인의 다른 탭에서 변경 시)
+  window.addEventListener("storage", (e) => {
+    if (e.key === "reservations") {
+      updateUI()
     }
-  }
+  })
 })
-// 사이드바 네비게이션 이벤트 (기존 코드 복원)
-document.querySelectorAll('.sidebar-button, .sidebar-sub').forEach(btn => {
-  if (btn.dataset.page) {
-    btn.addEventListener('click', () => {
-      window.location.href = btn.dataset.page;
-    });
-  }
-});

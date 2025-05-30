@@ -65,7 +65,7 @@
               <div class="nav-item active" data-page="usage-history.html">
                 <i class="fas fa-history"></i>
                 <span>이용 내역</span>
-                <div class="nav-badge">1</div>
+                <div class="nav-badge" style="display: none;">0</div>
               </div>
               <div class="nav-item" data-page="point.html">
                 <i class="fas fa-coins"></i>
@@ -121,15 +121,15 @@
             </div>
           </div>
 
-          <div class="current-room-card" id="current-room">
+          <div class="current-room-card" id="current-room" style="display: none;">
             <div class="room-header">
               <div class="room-info">
                 <div class="room-icon">
                   <i class="fas fa-door-open"></i>
                 </div>
                 <div class="room-details">
-                  <h3>IT1-305호</h3>
-                  <p>컴퓨터실 · 3층</p>
+                  <h3>IT1호관 101호</h3>
+                  <p>강의실 · 1층</p>
                 </div>
               </div>
               <div class="room-status-badge status-reserved" id="room-status">
@@ -143,7 +143,7 @@
                 <i class="fas fa-clock"></i>
                 <div class="timeline-content">
                   <span class="timeline-label">예약 시간</span>
-                  <span class="timeline-value">2025-05-20 09:00 ~ 15:00</span>
+                  <span class="timeline-value">2025-05-30 09:00 ~ 15:00</span>
                 </div>
               </div>
               <div class="timeline-item">
@@ -164,17 +164,14 @@
                 <i class="fas fa-times"></i>
                 <span>예약 취소</span>
               </button>
-              <button class="action-btn primary" id="exit-btn">
+              <button class="action-btn primary" id="exit-btn" style="display: none;">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>퇴실 인증</span>
               </button>
             </div>
           </div>
-        </div>
 
-
-
-          <div class="empty-state" style="display: none;">
+          <div class="empty-state">
             <i class="fas fa-inbox"></i>
             <h3>이용 내역이 없습니다</h3>
             <p>강의실을 예약하고 이용해보세요!</p>
