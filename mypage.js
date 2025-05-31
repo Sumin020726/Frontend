@@ -2,9 +2,9 @@
 
 class MyPageSystem {
   constructor() {
-    this.currentTemp = 36.5
+    this.currentPoints = 100
     this.elements = {
-      tempNumber: document.querySelector(".temp-number"),
+      pointsNumber: document.querySelector(".points-number"),
       gaugeFill: document.querySelector(".gauge-fill"),
       toast: document.getElementById("toast"),
     }
@@ -14,9 +14,26 @@ class MyPageSystem {
 
   init() {
     this.bindEvents()
-    this.updateTemperatureGauge()
+    this.updatePointsGauge()
+
+    // Add this line to ensure the gauge is visible on page load
+    setTimeout(() => {
+      if (this.elements.gaugeFill) {
+        const percent = (Math.min(Math.max(this.currentPoints, 0), 150) / 150) * 100
+        this.elements.gaugeFill.style.transition = "width 1s ease-in-out"
+        this.elements.gaugeFill.style.width = `${percent}%`
+      }
+    }, 500)
+
     this.addAnimations()
     this.startRealTimeUpdates()
+
+    // Listen for custom point events
+    document.addEventListener("pointsEarned", (e) => {
+      const { amount, reason, description, roomName } = e.detail
+      // Update points and show toast
+      this.updatePoints(amount)
+    })
   }
 
   bindEvents() {
@@ -88,45 +105,115 @@ class MyPageSystem {
     })
   }
 
-  updateTemperatureGauge() {
-    if (this.elements.tempNumber) {
-      this.elements.tempNumber.textContent = this.currentTemp.toFixed(1)
+  updatePointsGauge() {
+    if (this.elements.pointsNumber) {
+      this.elements.pointsNumber.textContent = this.currentPoints
     }
 
     if (this.elements.gaugeFill) {
-      // 온도를 백분율로 변환 (0-100도 기준)
-      const percent = Math.min(Math.max(this.currentTemp, 0), 100)
+      // 포인트를 백분율로 변환 (0-150점 기준)
+      const percent = (Math.min(Math.max(this.currentPoints, 0), 150) / 150) * 100
+      console.log("Setting gauge width to:", percent + "%")
       this.elements.gaugeFill.style.width = `${percent}%`
+
+      // Force a repaint to ensure the gauge is visible
+      this.elements.gaugeFill.offsetHeight
+
+      // Add color transition based on points
+      if (this.currentPoints < 30) {
+        this.elements.gaugeFill.style.background =
+          "linear-gradient(90deg, var(--error-color) 0%, var(--error-color) 100%)"
+      } else if (this.currentPoints < 70) {
+        this.elements.gaugeFill.style.background =
+          "linear-gradient(90deg, var(--warning-color) 0%, var(--warning-color) 100%)"
+      } else {
+        this.elements.gaugeFill.style.background =
+          "linear-gradient(90deg, var(--success-color) 0%, var(--success-color) 100%)"
+      }
     }
   }
 
-  increaseTemperature(delta) {
-    const newTemp = this.currentTemp + delta
-    this.currentTemp = Math.min(Math.max(newTemp, 0), 100) // 0-100 범위 제한
-    this.updateTemperatureGauge()
+  updatePoints(delta) {
+    const newPoints = this.currentPoints + delta
+    this.currentPoints = Math.min(Math.max(newPoints, 0), 150) // 0-150 범위 제한
+    this.updatePointsGauge()
 
-    // 온도 변화 알림
+    // 포인트 변화 알림
     if (delta > 0) {
-      this.showToast(`온도가 ${delta.toFixed(1)}°C 상승했습니다!`, "success")
+      this.showToast(`포인트가 ${delta}P 증가했습니다!`, "success")
     } else {
-      this.showToast(`온도가 ${Math.abs(delta).toFixed(1)}°C 하락했습니다.`, "warning")
+      this.showToast(`포인트가 ${Math.abs(delta)}P 감소했습니다.`, "warning")
     }
+
+    // 포인트 동기화를 위해 로컬 스토리지에 저장
+    localStorage.setItem("userPoints", this.currentPoints.toString())
+
+    // 사이드바 포인트 배지 업데이트
+    this.updatePointBadge()
+  }
+
+  updatePointBadge() {
+    const pointBadges = document.querySelectorAll(".nav-badge.point")
+    pointBadges.forEach((badge) => {
+      badge.textContent = `${this.currentPoints}P`
+    })
   }
 
   startRealTimeUpdates() {
-    // 실시간 데이터 업데이트 시뮬레이션
-    setInterval(() => {
-      // 랜덤하게 온도 미세 조정 (±0.1도)
-      const randomChange = (Math.random() - 0.5) * 0.2
-      this.currentTemp = Math.min(Math.max(this.currentTemp + randomChange, 0), 100)
-      this.updateTemperatureGauge()
-    }, 30000) // 30초마다
+    // Load points from localStorage
+    const storedPoints = localStorage.getItem("userPoints")
+    if (storedPoints) {
+      this.currentPoints = Number.parseInt(storedPoints, 10)
+      this.updatePointsGauge()
+      this.updatePointBadge()
+    }
 
-    // 현재 시간 업데이트
+    // Check for active reservations and update badges
+    this.updateHistoryBadge()
+
+    // Listen for point changes from other pages
+    window.addEventListener("storage", (e) => {
+      if (e.key === "userPoints") {
+        this.currentPoints = Number.parseInt(e.newValue, 10)
+        this.updatePointsGauge()
+        this.updatePointBadge()
+      } else if (e.key === "reservations") {
+        this.updateHistoryBadge()
+      }
+    })
+
+    // Update current time
     this.updateCurrentTime()
     setInterval(() => {
       this.updateCurrentTime()
     }, 1000)
+  }
+
+  // Add a new method to update history badge
+  updateHistoryBadge() {
+    const reservations = JSON.parse(localStorage.getItem("reservations")) || []
+    const activeReservations = reservations.filter((r) => r.status === "reserved" || r.status === "active")
+
+    const historyBadges = document.querySelectorAll('.nav-item[data-page="usage-history.html"] .nav-badge')
+    historyBadges.forEach((badge) => {
+      if (activeReservations.length > 0) {
+        badge.textContent = activeReservations.length
+        badge.style.display = "flex"
+      } else {
+        badge.style.display = "none"
+      }
+    })
+
+    // Also update the quick action badge
+    const actionBadge = document.querySelector('.action-card[data-tab="usage"] .action-badge')
+    if (actionBadge) {
+      if (activeReservations.length > 0) {
+        actionBadge.textContent = `${activeReservations.length}건`
+        actionBadge.style.display = "inline-block"
+      } else {
+        actionBadge.textContent = "0건"
+      }
+    }
   }
 
   updateCurrentTime() {
@@ -331,11 +418,12 @@ style.textContent = `
 `
 document.head.appendChild(style)
 
-// 페이지 로드 완료 후 초기화
+// Call updateHistoryBadge when the page loads
 document.addEventListener("DOMContentLoaded", () => {
   const myPageSystem = new MyPageSystem()
+  window.myPageSystem = myPageSystem // Make it globally accessible
 
-  // 페이지 로드 애니메이션
+  // Page load animation
   document.body.style.opacity = "0"
   document.body.style.transition = "opacity 0.5s ease-in"
 
@@ -343,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.opacity = "1"
   }, 100)
 
-  // 환영 메시지
+  // Welcome message
   setTimeout(() => {
     myPageSystem.showToast("마이페이지에 오신 것을 환영합니다!", "success")
   }, 1000)
@@ -364,7 +452,7 @@ document.addEventListener("visibilitychange", () => {
     console.log("Page visible")
     // 실시간 데이터 새로고침
     if (window.myPageSystem) {
-      window.myPageSystem.updateTemperatureGauge()
+      window.myPageSystem.updatePointsGauge()
     }
   }
 })

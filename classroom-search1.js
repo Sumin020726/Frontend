@@ -87,6 +87,7 @@ class ClassroomSystem {
     this.bindEvents()
     this.updateLastUpdateTime()
     this.addAnimations()
+    this.updatePointBadge() // 포인트 배지 업데이트
   }
 
   bindEvents() {
@@ -185,6 +186,22 @@ class ClassroomSystem {
           this.navigateWithAnimation(page)
         }
       })
+    })
+
+    // localStorage 변경 감지 (포인트 변경 시)
+    window.addEventListener("storage", (e) => {
+      if (e.key === "userPoints") {
+        this.updatePointBadge()
+      }
+    })
+  }
+
+  // 포인트 배지 업데이트 함수
+  updatePointBadge() {
+    const currentPoints = localStorage.getItem("userPoints") || "100"
+    const pointBadges = document.querySelectorAll(".nav-badge.point")
+    pointBadges.forEach((badge) => {
+      badge.textContent = `${currentPoints}P`
     })
   }
 

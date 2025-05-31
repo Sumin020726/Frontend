@@ -52,13 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 남은 시간 계산 및 표시
         updateRemainingTime(activeReservation)
-        const countdownItem = document.querySelector(".timeline-item:nth-child(2)");
+        const countdownItem = document.querySelector(".timeline-item:nth-child(2)")
         if (activeReservation.status === "reserved") {
           countdownItem.style.display = "none"
         } else {
           countdownItem.style.display = "flex"
         }
-
 
         // 상태에 따른 UI 업데이트
         updateStatusUI(activeReservation.status, activeReservation.type)
@@ -71,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           sectionHeader.innerHTML = `<i class="fas fa-door-open"></i> 현재 예약 중`
         }
-
 
         // 빈 상태 숨기고 현재 이용 중인 강의실 표시
         emptyState.style.display = "none"
@@ -103,16 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 배지 업데이트 함수
   function updateBadge() {
-    const historyBadge = document.querySelector('.nav-item[data-page="usage-history.html"] .nav-badge')
-    if (historyBadge) {
+    const historyBadges = document.querySelectorAll('.nav-item[data-page="usage-history.html"] .nav-badge')
+    historyBadges.forEach((badge) => {
       const activeReservations = reservations.filter((r) => r.status === "reserved" || r.status === "active")
       if (activeReservations.length > 0) {
-        historyBadge.textContent = activeReservations.length
-        historyBadge.style.display = "flex"
+        badge.textContent = activeReservations.length
+        badge.style.display = "flex"
       } else {
-        historyBadge.style.display = "none"
+        badge.style.display = "none"
       }
-    }
+    })
   }
 
   // 남은 시간 업데이트 함수 (NaN 오류 수정)
@@ -192,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
       countdown.style.color = "var(--error-color)"
     }
   }
+  
 
   // 상태에 따른 UI 업데이트 함수
   function updateStatusUI(status, type) {
@@ -211,6 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
       exitBtn.style.display = "block"
     }
   }
+  
 
   // 사용 중 변경 버튼 클릭 이벤트 (사진 업로드 필요)
   changeStatusBtn.addEventListener("click", () => {
@@ -234,10 +234,14 @@ document.addEventListener("DOMContentLoaded", () => {
       reservations = JSON.parse(localStorage.getItem("reservations")) || []
       const activeIndex = reservations.findIndex((r) => r.status === "reserved")
       if (activeIndex !== -1) {
+        const reservation = reservations[activeIndex]
         reservations.splice(activeIndex, 1) // 해당 예약 제거
         localStorage.setItem("reservations", JSON.stringify(reservations))
         updateUI()
         showToast("info", "예약이 취소되었습니다.")
+
+        // 예약 정상 취소 시 포인트 적립 (5P)
+        updateUserPoints(5, "예약 취소", "정상적인 예약 취소 처리 (15분 전)", reservation.roomName)
       }
     })
   })
@@ -248,11 +252,15 @@ document.addEventListener("DOMContentLoaded", () => {
       reservations = JSON.parse(localStorage.getItem("reservations")) || []
       const activeIndex = reservations.findIndex((r) => r.status === "active")
       if (activeIndex !== -1) {
+        const reservation = reservations[activeIndex]
         // 퇴실 인증 완료 시 목록에서 완전히 제거
         reservations.splice(activeIndex, 1)
         localStorage.setItem("reservations", JSON.stringify(reservations))
         updateUI()
         showToast("success", "퇴실 인증이 완료되었습니다.")
+
+        // 포인트 적립 (5P)
+        updateUserPoints(5, "정상 이용 완료", "강의실 정상 이용 완료", reservation.roomName)
       }
     })
   })
@@ -271,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="modal-body" style="padding: 20px;">
               <p style="margin-bottom: 20px; color: var(--text-primary);">${message}</p>
-              <p style="margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">인증을 위해 강의실 팻말 사진을 업로드해주세요.</p>
+              <p style="margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">인증을 위해 강의실 내부 사진을 업로드해주세요.</p>
               
               <div class="photo-upload-area-modal" id="photoUploadAreaModal" style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
                 <div class="upload-placeholder">
@@ -487,4 +495,110 @@ document.addEventListener("DOMContentLoaded", () => {
       updateUI()
     }
   })
+
+  // 사용자 포인트 업데이트 함수
+  function updateUserPoints(delta, reason = "", description = "", roomName = null) {
+    // 로컬 스토리지에서 현재 포인트 가져오기
+    let currentPoints = Number.parseInt(localStorage.getItem("userPoints") || "100", 10)
+
+    // 포인트 업데이트
+    currentPoints += delta
+
+    // 포인트 범위 제한 (0-150)
+    currentPoints = Math.min(Math.max(currentPoints, 0), 150)
+
+    // 로컬 스토리지에 저장
+    localStorage.setItem("userPoints", currentPoints.toString())
+
+    // 사이드바 포인트 배지 업데이트
+    const pointBadges = document.querySelectorAll(".nav-badge.point")
+    pointBadges.forEach((badge) => {
+      badge.textContent = `${currentPoints}P`
+    })
+
+    // 포인트 변경 알림
+    if (delta > 0) {
+      showToast("success", `${delta}P가 적립되었습니다!`)
+
+      // 포인트 이력에 직접 추가
+      const pointHistory = JSON.parse(localStorage.getItem("pointHistory") || "[]")
+      const now = new Date()
+      const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
+
+      const newEntry = {
+        id: Date.now(),
+        type: "plus",
+        title: reason || "포인트 적립",
+        description: roomName ? `${description} (${roomName})` : description,
+        points: delta,
+        date: formattedDate,
+      }
+
+      pointHistory.unshift(newEntry)
+      localStorage.setItem("pointHistory", JSON.stringify(pointHistory))
+
+      // 이벤트도 계속 발생시킵니다 (다른 페이지와의 호환성을 위해)
+      const event = new CustomEvent("pointsEarned", {
+        detail: {
+          amount: delta,
+          reason: reason || (delta === 5 ? "포인트 적립" : "포인트 적립"),
+          description: description || (delta === 5 ? "강의실 정상 이용 완료" : "시스템 포인트 적립"),
+          roomName: roomName,
+        },
+      })
+      document.dispatchEvent(event)
+    } else if (delta < 0) {
+      showToast("warning", `${Math.abs(delta)}P가 차감되었습니다.`)
+
+      // 포인트 차감 이력 추가
+      const pointHistory = JSON.parse(localStorage.getItem("pointHistory") || "[]")
+      const now = new Date()
+      const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
+
+      const newEntry = {
+        id: Date.now(),
+        type: "minus",
+        title: reason || "포인트 차감",
+        description: roomName ? `${description} (${roomName})` : description,
+        points: delta,
+        date: formattedDate,
+      }
+
+      pointHistory.unshift(newEntry)
+      localStorage.setItem("pointHistory", JSON.stringify(pointHistory))
+
+      // 이벤트 발생
+      const event = new CustomEvent("pointsEarned", {
+        detail: {
+          amount: delta,
+          reason: reason || "포인트 차감",
+          description: description || "시스템 포인트 차감",
+          roomName: roomName,
+        },
+      })
+      document.dispatchEvent(event)
+    }
+  }
+})
+
+// Add event listener for page load to update badges
+document.addEventListener("DOMContentLoaded", () => {
+  // Update badges when page loads
+  const updateBadge = () => {
+    const historyBadges = document.querySelectorAll('.nav-item[data-page="usage-history.html"] .nav-badge')
+    historyBadges.forEach((badge) => {
+      const reservations = JSON.parse(localStorage.getItem("reservations")) || []
+      const activeReservations = reservations.filter((r) => r.status === "reserved" || r.status === "active")
+      if (activeReservations.length > 0) {
+        badge.textContent = activeReservations.length
+        badge.style.display = "flex"
+      } else {
+        badge.style.display = "none"
+      }
+    })
+  }
+
+  updateBadge()
+
+  // Rest of the initialization code...
 })

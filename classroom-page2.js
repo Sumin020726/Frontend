@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 인증 성공 모달 표시
         showAuthSuccessModal(startTime, endTime)
       } else {
-        showToast("error", "인증에 실패했습니다. 강의실 팻말이 잘 보이도록 다시 촬영해주세요.")
+        showToast("error", "인증에 실패했습니다. 강의실 내부가 잘 보이도록 다시 촬영해주세요.")
         window.resetPhotoUpload()
       }
 
@@ -600,6 +600,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // 포인트 배지 업데이트 함수
+  function updatePointBadge() {
+    const currentPoints = localStorage.getItem("userPoints") || "100"
+    const pointBadges = document.querySelectorAll(".nav-badge.point")
+    pointBadges.forEach((badge) => {
+      badge.textContent = `${currentPoints}P`
+    })
+  }
+
   // 네비게이션 아이템 클릭 이벤트 (페이지 이동)
   document.querySelectorAll(".nav-item").forEach((item) => {
     item.addEventListener("click", () => {
@@ -636,12 +645,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // 페이지 로드 시 초기화
   disableUnavailableTimeOptions()
   updateHistoryBadge()
+  updatePointBadge() // 포인트 배지 업데이트
 
   // localStorage 변경 감지 (다른 탭에서 예약 변경 시)
   window.addEventListener("storage", (e) => {
     if (e.key === "reservations") {
       disableUnavailableTimeOptions()
       updateReservationSummary()
+    } else if (e.key === "userPoints") {
+      updatePointBadge() // 포인트 변경 시 배지 업데이트
     }
   })
 })

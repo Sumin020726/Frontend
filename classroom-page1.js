@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 인증 성공 모달 표시
         showAuthSuccessModal(startTime, endTime)
       } else {
-        showToast("error", "인증에 실패했습니다. 강의실 팻말이 잘 보이도록 다시 촬영해주세요.")
+        showToast("error", "인증에 실패했습니다. 강의실 내부가 잘 보이도록 다시 촬영해주세요.")
         window.resetPhotoUpload()
       }
 
@@ -595,15 +595,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const reservations = JSON.parse(localStorage.getItem("reservations")) || []
     const activeReservations = reservations.filter((r) => r.status === "reserved" || r.status === "active")
 
-    const historyBadge = document.querySelector('.nav-item[data-page="usage-history.html"] .nav-badge')
-    if (historyBadge) {
+    const historyBadges = document.querySelectorAll('.nav-item[data-page="usage-history.html"] .nav-badge')
+    historyBadges.forEach((badge) => {
       if (activeReservations.length > 0) {
-        historyBadge.textContent = activeReservations.length
-        historyBadge.style.display = "flex"
+        badge.textContent = activeReservations.length
+        badge.style.display = "flex"
       } else {
-        historyBadge.style.display = "none"
+        badge.style.display = "none"
       }
-    }
+    })
+
+    // Also update quick action badges if they exist
+    const actionBadges = document.querySelectorAll('.action-card[data-tab="usage"] .action-badge')
+    actionBadges.forEach((badge) => {
+      if (activeReservations.length > 0) {
+        badge.textContent = `${activeReservations.length}건`
+      } else {
+        badge.textContent = "0건"
+      }
+    })
+  }
+
+  // 포인트 배지 업데이트 함수 추가 (updateHistoryBadge 함수 다음에)
+  function updatePointBadge() {
+    const currentPoints = Number.parseInt(localStorage.getItem("userPoints") || "100", 10)
+    const pointBadges = document.querySelectorAll(".nav-badge.point")
+    pointBadges.forEach((badge) => {
+      badge.textContent = `${currentPoints}P`
+    })
   }
 
   // 네비게이션 아이템 클릭 이벤트 (페이지 이동)
@@ -642,12 +661,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // 페이지 로드 시 초기화
   disableUnavailableTimeOptions()
   updateHistoryBadge()
+  updatePointBadge() // 이 줄 추가
 
   // localStorage 변경 감지 (다른 탭에서 예약 변경 시)
   window.addEventListener("storage", (e) => {
     if (e.key === "reservations") {
       disableUnavailableTimeOptions()
       updateReservationSummary()
+    } else if (e.key === "userPoints") {
+      updatePointBadge()
     }
   })
+
+  // Update badges
+  updateHistoryBadge()
 })

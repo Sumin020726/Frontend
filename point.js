@@ -1,48 +1,47 @@
 class PointsSystem {
   constructor() {
-    this.currentPoints = 100
-    this.historyData = [
-      {
-        id: 1,
-        type: "plus",
-        title: "신고 보상",
-        description: "부정 이용 신고 접수 완료",
-        points: 10,
-        date: "2025-05-21 14:30",
-      },
-      {
-        id: 2,
-        type: "plus",
-        title: "예약 취소",
-        description: "정상적인 예약 취소 처리",
-        points: 5,
-        date: "2025-05-20 16:45",
-      },
-      {
-        id: 3,
-        type: "minus",
-        title: "미퇴실",
-        description: "예약 시간 종료 후 미퇴실",
-        points: -15,
-        date: "2025-05-18 18:00",
-      },
-      {
-        id: 4,
-        type: "plus",
-        title: "정상 이용",
-        description: "IT1-101 강의실 정상 이용 완료",
-        points: 5,
-        date: "2025-05-15 14:00",
-      },
-      {
-        id: 5,
-        type: "plus",
-        title: "첫 이용 보너스",
-        description: "강의실 예약 시스템 첫 이용",
-        points: 100,
-        date: "2025-05-10 10:00",
-      },
-    ]
+    // 로컬 스토리지에서 포인트 불러오기
+    const storedPoints = localStorage.getItem("userPoints")
+    this.currentPoints = storedPoints ? Number.parseInt(storedPoints, 10) : 100
+
+    // 로컬 스토리지에서 포인트 이력 불러오기
+    const storedHistory = localStorage.getItem("pointHistory")
+    this.historyData = storedHistory
+      ? JSON.parse(storedHistory)
+      : [
+          {
+            id: 1,
+            type: "plus",
+            title: "신고 보상",
+            description: "부정 이용 신고 접수 완료",
+            points: 10,
+            date: "2025-05-21 14:30",
+          },
+          {
+            id: 3,
+            type: "minus",
+            title: "미퇴실",
+            description: "예약 시간 종료 후 미퇴실",
+            points: -15,
+            date: "2025-05-18 18:00",
+          },
+          {
+            id: 4,
+            type: "plus",
+            title: "정상 이용",
+            description: "IT1-101 강의실 정상 이용 완료",
+            points: 5,
+            date: "2025-05-15 14:00",
+          },
+          {
+            id: 5,
+            type: "plus",
+            title: "첫 이용 보너스",
+            description: "강의실 예약 시스템 첫 이용",
+            points: 100,
+            date: "2025-05-10 10:00",
+          },
+        ]
 
     this.currentFilter = "all"
 
@@ -59,10 +58,93 @@ class PointsSystem {
     this.init()
   }
 
+  // Add method to add new point history entries
+  addPointHistoryEntry(title, description, points, roomName = null) {
+    const now = new Date()
+    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
+
+    const newEntry = {
+      id: Date.now(),
+      type: points > 0 ? "plus" : "minus",
+      title: title,
+      description: roomName ? `${description} (${roomName})` : description,
+      points: points,
+      date: formattedDate,
+    }
+
+    // Add to the beginning of the array
+    this.historyData.unshift(newEntry)
+
+    // Save to localStorage
+    this.saveHistoryToStorage()
+
+    // Re-render the history
+    this.renderHistory()
+
+    // 애니메이션 효과 추가
+    setTimeout(() => {
+      this.animateHistoryItems()
+    }, 100)
+
+    console.log("포인트 이력 추가됨:", newEntry)
+  }
+
+  // 포인트 이력을 로컬 스토리지에 저장
+  saveHistoryToStorage() {
+    localStorage.setItem("pointHistory", JSON.stringify(this.historyData))
+  }
+
+  // Modify the init method to listen for point change events
   init() {
     this.bindEvents()
     this.updatePointsDisplay()
     this.renderHistory()
+
+    // Listen for custom point events from other pages
+    document.addEventListener("pointsEarned", (e) => {
+      const { amount, reason, description, roomName } = e.detail
+      this.addPointHistoryEntry(reason, description, amount, roomName)
+
+      // 포인트 업데이트 (이미 localStorage에서 업데이트된 경우 중복 방지)
+      const storedPoints = localStorage.getItem("userPoints")
+      if (storedPoints) {
+        this.currentPoints = Number.parseInt(storedPoints, 10)
+        this.updatePointsDisplay()
+      }
+    })
+
+    // Listen for point changes
+    window.addEventListener("storage", (e) => {
+      if (e.key === "userPoints") {
+        const oldPoints = this.currentPoints
+        const newPoints = Number.parseInt(e.newValue, 10)
+
+        this.currentPoints = newPoints
+        this.updatePointsDisplay()
+      } else if (e.key === "pointHistory") {
+        // Reload history from localStorage
+        const history = JSON.parse(e.newValue)
+        if (history && Array.isArray(history)) {
+          this.historyData = history
+          this.renderHistory()
+        }
+      }
+    })
+
+    // 페이지 로드 시 localStorage에서 최신 데이터 확인
+    const storedHistory = localStorage.getItem("pointHistory")
+    if (storedHistory) {
+      try {
+        const parsedHistory = JSON.parse(storedHistory)
+        if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
+          this.historyData = parsedHistory
+          this.renderHistory()
+        }
+      } catch (e) {
+        console.error("포인트 이력 파싱 오류:", e)
+      }
+    }
+
     this.addAnimations()
   }
 
@@ -162,16 +244,33 @@ class PointsSystem {
 
       this.elements.pointsStatus.className = `points-status ${statusClass}`
       this.elements.pointsStatus.innerHTML = `
-        <i class="${statusIcon}"></i>
-        <span>${statusText}</span>
-      `
+      <i class="${statusIcon}"></i>
+      <span>${statusText}</span>
+    `
     }
 
-    // 게이지 업데이트
+    // 게이지 업데이트 - 수정된 부분
     if (this.elements.gaugeFill) {
       const percent = (Math.min(Math.max(this.currentPoints, 0), 150) / 150) * 100
+      console.log("Setting gauge width to:", percent + "%")
       this.elements.gaugeFill.style.width = `${percent}%`
+
+      // Force a repaint to ensure the gauge is visible
+      this.elements.gaugeFill.offsetHeight
     }
+
+    // 사이드바 포인트 배지 업데이트
+    this.updatePointBadge()
+
+    // 로컬 스토리지에 포인트 저장 (다른 페이지와 동기화)
+    localStorage.setItem("userPoints", this.currentPoints.toString())
+  }
+
+  updatePointBadge() {
+    const pointBadges = document.querySelectorAll(".nav-badge.point")
+    pointBadges.forEach((badge) => {
+      badge.textContent = `${this.currentPoints}P`
+    })
   }
 
   renderHistory() {
@@ -354,6 +453,22 @@ class PointsSystem {
       window.location.href = page
     }, 300)
   }
+
+  // Add a method to check for active reservations and update badges
+  updateHistoryBadge() {
+    const reservations = JSON.parse(localStorage.getItem("reservations")) || []
+    const activeReservations = reservations.filter((r) => r.status === "reserved" || r.status === "active")
+
+    const historyBadges = document.querySelectorAll('.nav-item[data-page="usage-history.html"] .nav-badge')
+    historyBadges.forEach((badge) => {
+      if (activeReservations.length > 0) {
+        badge.textContent = activeReservations.length
+        badge.style.display = "flex"
+      } else {
+        badge.style.display = "none"
+      }
+    })
+  }
 }
 
 // CSS 애니메이션 추가
@@ -406,11 +521,15 @@ style.textContent = `
 `
 document.head.appendChild(style)
 
-// 페이지 로드 완료 후 초기화
+// Call updateHistoryBadge when the page loads
 document.addEventListener("DOMContentLoaded", () => {
   const pointsSystem = new PointsSystem()
+  window.pointsSystem = pointsSystem
 
-  // 페이지 로드 애니메이션
+  // Update history badge
+  pointsSystem.updateHistoryBadge()
+
+  // Page load animation
   document.body.style.opacity = "0"
   document.body.style.transition = "opacity 0.5s ease-in"
 
@@ -418,7 +537,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.opacity = "1"
   }, 100)
 
-  // 환영 메시지
+  // Welcome message
   setTimeout(() => {
     pointsSystem.showToast("보증 포인트 페이지에 오신 것을 환영합니다!", "success")
   }, 1000)
