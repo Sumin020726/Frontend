@@ -1027,3 +1027,16 @@ body {
     --border-color: #4a5568;
   }
 }
+
+/* ✅ 상태별 색상 구분 */
+.status-not-in-use {
+  color: var(--error-color);      /* 🔴 미사용 = 빨강 */
+}
+
+.status-in-use {
+  color: var(--warning-color);    /* 🟠 사용 중 = 주황 */
+}
+
+.status-available {
+  color: var(--success-color);    /* 🟢 사용 가능 = 초록 */
+}

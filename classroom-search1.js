@@ -256,9 +256,23 @@ class ClassroomSystem {
         const lockedClass = room.isLocked ? "status-locked" : "status-unlocked"
 
         // 사용 여부 아이콘 및 텍스트
-        const inUseIcon = room.inUse ? '<i class="fas fa-user"></i>' : '<i class="fas fa-user-slash"></i>'
-        const inUseText = room.inUse ? "사용 중" : "미사용"
-        const inUseClass = room.inUse ? "status-in-use" : "status-not-in-use"
+        let inUseIcon = ""
+        let inUseText = ""
+        let inUseClass = ""
+
+        if (room.isLocked) {
+          inUseIcon = '<i class="fas fa-lock"></i>'
+          inUseText = "미사용"
+          inUseClass = "status-not-in-use"
+        } else if (room.probability < 50) {
+          inUseIcon = '<i class="fas fa-user"></i>'
+          inUseText = "사용 중"
+          inUseClass = "status-in-use"
+        } else {
+          inUseIcon = '<i class="fas fa-user-check"></i>'
+          inUseText = "사용 가능"
+          inUseClass = "status-available"
+        }
 
         // 잠금된 강의실은 입장 버튼 비활성화
         const isEntryDisabled = room.isLocked
