@@ -548,13 +548,13 @@ html, body {
 }
 
 .toast.error .toast-icon {
-  color: var(--text-primary);
+  color: var(--error-color);
 }
 
 .toast-message {
   font-weight: 500;
   color: var(--text-primary);
-
+  
 }
 
 /* 반응형 디자인 */
