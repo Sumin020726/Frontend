@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 인증 성공 모달 표시
         showAuthSuccessModal(startTime, endTime)
       } else {
-        showToast("error", "인증에 실패했습니다. 강의실 내부가 잘 보이도록 다시 촬영해주세요.")
+        showToast("error", "인증에 실패했습니다. 강의실 팻말이 잘 보이도록 다시 촬영해주세요.")
         window.resetPhotoUpload()
       }
 
