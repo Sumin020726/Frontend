@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="modal-body" style="padding: 20px;">
               <p style="margin-bottom: 20px; color: var(--text-primary);">${message}</p>
-              <p style="margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">인증을 위해 강의실 내부 사진을 업로드해주세요.</p>
+              <p style="margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);">인증을 위해 강의실 팻말 사진을 업로드해주세요.</p>
               
               <div class="photo-upload-area-modal" id="photoUploadAreaModal" style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
                 <div class="upload-placeholder">
