@@ -52,9 +52,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 남은 시간 계산 및 표시
         updateRemainingTime(activeReservation)
+        const countdownItem = document.querySelector(".timeline-item:nth-child(2)");
+        if (activeReservation.status === "reserved") {
+          countdownItem.style.display = "none"
+        } else {
+          countdownItem.style.display = "flex"
+        }
+
 
         // 상태에 따른 UI 업데이트
         updateStatusUI(activeReservation.status, activeReservation.type)
+        // updateUI 함수 내부에서 이 부분 찾아서
+        const sectionHeader = document.querySelector(".current-usage-section .section-header h2")
+
+        // 상태가 active일 때 텍스트 바꾸기
+        if (activeReservation.status === "active") {
+          sectionHeader.innerHTML = `<i class="fas fa-door-open"></i> 현재 이용 중`
+        } else {
+          sectionHeader.innerHTML = `<i class="fas fa-door-open"></i> 현재 예약 중`
+        }
+
 
         // 빈 상태 숨기고 현재 이용 중인 강의실 표시
         emptyState.style.display = "none"
